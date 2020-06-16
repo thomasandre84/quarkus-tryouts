@@ -21,7 +21,7 @@
     <protoc.version>3.12.3</protoc.version>
     <fabric8.version>0.33.0</fabric8.version>
     <jacoco.version>0.8.5</jacoco.version>
-    <docker.image.prefix>dockerhub/</docker.image.prefix>
+    <docker.image.prefix>dockerhub</docker.image.prefix>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -187,9 +187,8 @@
             <image>
               <name>${docker.image.prefix}/${project.artifactId}</name>
               <build>
-
                 <contextDir>${project.basedir}</contextDir>
-                <dockerFile>src/main/docker/Dockerfile</dockerFile>
+                <dockerFile>Dockerfile</dockerFile>
                 <tags>
                   <tag>${project.version}</tag>
                 </tags>
