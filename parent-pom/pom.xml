@@ -19,6 +19,9 @@
     <surefire-plugin.version>2.22.1</surefire-plugin.version>
     <grpc.version>1.30.0</grpc.version>
     <protoc.version>3.12.3</protoc.version>
+    <fabric8.version>0.33.0</fabric8.version>
+    <jacoco.version>0.8.5</jacoco.version>
+    <docker.image.prefix>dockerhub/</docker.image.prefix>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -124,6 +127,75 @@
           <systemPropertyVariables>
             <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
           </systemPropertyVariables>
+          <classpathDependencyExcludes>
+            <classpathDependencyExclude>org.jboss.slf4j:slf4j-jboss-logging</classpathDependencyExclude>
+          </classpathDependencyExcludes>
+        </configuration>
+      </plugin>
+       <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco.version}</version>
+        <configuration>
+          <excludes>
+            <exclude>**/model/**</exclude>
+          </excludes>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <!-- attached to Maven test phase -->
+          <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+          <!-- Check if the coverage is too low -->
+          <execution>
+            <id>jacoco-check</id>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <rule>
+                  <element>BUNDLE</element>
+                  <limits>
+                    <limit>
+                      <counter>LINE</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>51%</minimum>
+                    </limit>
+                  </limits>
+                </rule>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>io.fabric8</groupId>
+        <artifactId>docker-maven-plugin</artifactId>
+        <version>${fabric8.version}</version>
+        <configuration>
+          <images>
+            <image>
+              <name>${docker.image.prefix}/${project.artifactId}</name>
+              <build>
+
+                <contextDir>${project.basedir}</contextDir>
+                <dockerFile>src/main/docker/Dockerfile</dockerFile>
+                <tags>
+                  <tag>${project.version}</tag>
+                </tags>
+              </build>
+            </image>
+          </images>
         </configuration>
       </plugin>
     </plugins>
