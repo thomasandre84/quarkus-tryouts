@@ -18,7 +18,6 @@
   </properties>
 
   <artifactId>quarkus-grpc</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
 
   <dependencies>
     <!-- some fix for this lib to prevent it taken in Version 3.6.0 -->
@@ -30,6 +29,10 @@
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-grpc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-resteasy-mutiny</artifactId>
     </dependency>
   </dependencies>
 
