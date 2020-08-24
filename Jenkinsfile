@@ -7,7 +7,6 @@ pipeline {
 		booleanParam(name: 'sonar', description: 'Scan Sonar', defaultValue: 'false')
     }
 	environment {
-		//GCLOUD_PROJ_ID = credentials('gcloud_proj_id')
 		GRPC = 'quarkus-grpc'
 		REACTIVE_REST = 'quarkus-reactive-rest'
 		JMS = 'quarkus-jms'
@@ -16,8 +15,8 @@ pipeline {
 		stage("Build") {
 			steps {
 				sh "mvn clean install -f parent-pom/pom.xml"
-				sh "mvn clean package -f quarkus-grpc/pom.xml"
-				sh "mvn clean package -f quarkus-reactive-rest/pom.xml"
+				sh "mvn clean package -f ${GRPC}/pom.xml"
+				sh "mvn clean package -f ${REACTIVE_REST}/pom.xml"
 				sh "mvn clean package -f ${JMS}/pom.xml"
 			}
 

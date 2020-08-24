@@ -24,6 +24,8 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-resteasy-mutiny</artifactId>
     </dependency>
+
+
   </dependencies>
 
   <build>

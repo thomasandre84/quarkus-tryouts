@@ -10,8 +10,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 
-@Path("/stream")
+@Path(StreamingResource.BASE_URL)
 public class StreamingResource {
+    static final String BASE_URL = "/stream";
 
     private final StreamingService streamingService;
 
