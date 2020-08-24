@@ -16,22 +16,22 @@ pipeline {
 			steps {
 				sh "mvn clean install -f parent-pom/pom.xml"
 				sh "mvn clean package -f quarkus-grpc/pom.xml"
-
+				sh "mvn clean package -f quarkus-reactive-rest/pom.xml"
 			}
 
-			post {
+			/*post {
 				always {
 					junit "target/surefire-reports/*.xml"
 				}
-				/*success {
+				success {
 					notify("Successful", params.email)
 					notifySlack("Build Successful", "good")
 				}
 				failure {
 					notify("Failure", params.email)
 					notifySlack("Build Failure", "danger")
-				}*/
-			}
+				}
+			}*/
 		}
 
 		stage('SonarQube analysis') {
@@ -44,11 +44,16 @@ pipeline {
 				}
 				withSonarQubeEnv('sonarQube') {
 					sh "${scannerHome}/bin/sonar-scanner " +
-							"-Dsonar.projectKey=$SONAR_KEY " +
-							"-Dsonar.sources=src " +
+							"-Dsonar.projectKey=$GRPC " +
+							"-Dsonar.sources=${GRPC}/src " +
 							"-Dsonar.java.source=11 " +
-							"-Dsonar.java.binaries=target/classes"
-							//"-Dsonar.coverage.jacoco.xmlReportPaths=target/sites/jacoco"
+							"-Dsonar.java.binaries=${GRPC}/target/classes"
+
+					sh "${scannerHome}/bin/sonar-scanner " +
+							"-Dsonar.projectKey=$REACTIVE_REST " +
+							"-Dsonar.sources=${REACTIVE_REST}/src " +
+							"-Dsonar.java.source=11 " +
+							"-Dsonar.java.binaries=${REACTIVE_REST}/target/classes"
 				}
 			}
 			/*post {
