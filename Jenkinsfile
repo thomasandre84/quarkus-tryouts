@@ -10,6 +10,7 @@ pipeline {
 		//GCLOUD_PROJ_ID = credentials('gcloud_proj_id')
 		GRPC = 'quarkus-grpc'
 		REACTIVE_REST = 'quarkus-reactive-rest'
+		JMS = 'quarkus-jms'
 	}
 	stages {
 		stage("Build") {
@@ -17,6 +18,7 @@ pipeline {
 				sh "mvn clean install -f parent-pom/pom.xml"
 				sh "mvn clean package -f quarkus-grpc/pom.xml"
 				sh "mvn clean package -f quarkus-reactive-rest/pom.xml"
+				sh "mvn clean package -f ${JMS}/pom.xml"
 			}
 
 			/*post {
@@ -54,6 +56,12 @@ pipeline {
 							"-Dsonar.sources=${REACTIVE_REST}/src " +
 							"-Dsonar.java.source=11 " +
 							"-Dsonar.java.binaries=${REACTIVE_REST}/target/classes"
+
+					sh "${scannerHome}/bin/sonar-scanner " +
+							"-Dsonar.projectKey=$JMS " +
+							"-Dsonar.sources=${JMS}/src " +
+							"-Dsonar.java.source=11 " +
+							"-Dsonar.java.binaries=${JMS}/target/classes"
 				}
 			}
 			/*post {
