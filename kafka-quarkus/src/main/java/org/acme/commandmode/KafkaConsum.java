@@ -4,7 +4,6 @@ import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.vertx.ext.web.common.template.test;
 
 public class KafkaConsum {
 
