@@ -17,10 +17,20 @@ public class ProdController {
     @Inject
     KafkaProd kafkaProd;
 
+    @Inject
+    ProdConsService prodConsService;
+
     @GET
     @Path("/{test}")
-    public Uni<Void> sendMessage(@PathParam("test") String test) {
+    public void sendMessage(@PathParam("test") String test) {
         log.info(test);
         kafkaProd.setMessage(test);
+    }
+
+    @GET
+    @Path("/response/{test}")
+    public void response(@PathParam("test") String test) {
+        log.info("Received Request: {}", test);
+        prodConsService.sendMessage(test);
     }
 }
