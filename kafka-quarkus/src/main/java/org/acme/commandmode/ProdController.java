@@ -31,6 +31,6 @@ public class ProdController {
     @Path("/response/{test}")
     public void response(@PathParam("test") String test) {
         log.info("Received Request: {}", test);
-        prodConsService.sendMessage(test);
+        prodConsService.process(test);
     }
 }

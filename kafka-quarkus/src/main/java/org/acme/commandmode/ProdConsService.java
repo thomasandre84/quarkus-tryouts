@@ -10,22 +10,34 @@ import org.slf4j.LoggerFactory;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.time.LocalDateTime;
+import java.util.concurrent.CompletableFuture;
 
 @ApplicationScoped
 public class ProdConsService {
     static Logger log = LoggerFactory.getLogger(ProdConsService.class);
 
+    UnicastProcessor<String> processor = UnicastProcessor.create();
+    Multi<String> multi = processor.onItem().transform(String::toString);
+
     @Inject
     @Channel("request")
     Emitter<String> emitter;
 
+    CustomExecutor executor = new CustomExecutor();
+
     //
     //UnicastProcessor<String> processor = UnicastProcessor.create();
-    Multi<String> multi = Multi.createFrom().empty();
 
-    public void sendMessage(String test) {
+
+    public Uni<String> sendMessage(String test) {
         log.info("Outgoing: {}", test);
-        emitter.send(test);
+        //Metadata metadata = new Metadata();
+        emitter.send(Message.of(test,
+                () -> {
+                    // Called when the message is acknowledged.
+                    return CompletableFuture.completedFuture(null);
+                }));
+        return Uni.createFrom().item(test);
     }
 
     @Incoming("request-in")
@@ -38,22 +50,22 @@ public class ProdConsService {
     }
 
     @Incoming("response-in")
-    public Uni<String> respond(String message) {
+    public void respond(String message) {
         log.info("Incoming Response: {}", message);
-        return Uni.createFrom().item(message);
+        processor.onNext(message);
     }
 
-    @Outgoing("request")
-    public Multi<String> sendOut() {
-        return multi;
+    private Object streamRespond(Object item) {
+        return null;
     }
+
 
     public void process(String message) {
-        Multi<String> multiProcess = Multi.createFrom().item(message)
-                //.onItem()
-                .call(this::respond);
-                //.map()
-
+        Uni<String> input = sendMessage(message);
+        log.info("After Send Ack: {}", input);
+        Uni<String> resp = Uni.createFrom().multi(multi);
+        resp.onItem().invoke(t -> log.info("received: {}", t))
+        .subscribe().with(item -> System.out.println(item));
     }
 
 }
