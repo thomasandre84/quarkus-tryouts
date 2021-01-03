@@ -2,6 +2,7 @@ package org.acme.commandmode;
 
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
+import io.smallrye.mutiny.operators.multi.processors.BroadcastProcessor;
 import io.smallrye.mutiny.operators.multi.processors.UnicastProcessor;
 import org.eclipse.microprofile.reactive.messaging.*;
 import org.slf4j.Logger;
@@ -16,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 public class ProdConsService {
     static Logger log = LoggerFactory.getLogger(ProdConsService.class);
 
-    UnicastProcessor<String> processor = UnicastProcessor.create();
+    BroadcastProcessor<String> processor = BroadcastProcessor.create();
     Multi<String> multi = processor.onItem().transform(String::toString);
 
     @Inject
@@ -60,12 +61,15 @@ public class ProdConsService {
     }
 
 
-    public void process(String message) {
+    public Uni<String> process(String message) {
+        Uni<String> resp = Uni.createFrom().multi(multi);
+        resp.onItem().invoke(t -> log.info("received: {}", t));
+        //.subscribe().with(item -> System.out.println(item));
+
         Uni<String> input = sendMessage(message);
         log.info("After Send Ack: {}", input);
-        Uni<String> resp = Uni.createFrom().multi(multi);
-        resp.onItem().invoke(t -> log.info("received: {}", t))
-        .subscribe().with(item -> System.out.println(item));
+
+        return resp;
     }
 
 }

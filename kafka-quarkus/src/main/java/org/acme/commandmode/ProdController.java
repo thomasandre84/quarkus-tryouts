@@ -4,6 +4,9 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import io.smallrye.mutiny.Uni;
 import org.slf4j.Logger;
@@ -29,8 +32,10 @@ public class ProdController {
 
     @GET
     @Path("/response/{test}")
-    public void response(@PathParam("test") String test) {
+    @Produces(MediaType.TEXT_PLAIN)
+    public Uni<Response> response(@PathParam("test") String test) {
         log.info("Received Request: {}", test);
-        prodConsService.process(test);
+        return prodConsService.process(test)
+                .onItem().transform( s -> Response.ok(s).build());
     }
 }
