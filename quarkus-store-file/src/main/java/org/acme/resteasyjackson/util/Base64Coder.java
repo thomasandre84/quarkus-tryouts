@@ -6,9 +6,9 @@ import java.util.Base64;
 public class Base64Coder {
     private Base64Coder(){}
 
-    public static String encodeB64(byte[] filecontent) {
+    public static String encodeB64(byte[] fileContent) {
         Base64.Encoder encoder = Base64.getEncoder();
-        String content = encoder.encodeToString(filecontent);
+        String content = encoder.encodeToString(fileContent);
 
         return content;
     }
