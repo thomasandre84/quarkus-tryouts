@@ -3,7 +3,7 @@ package org.acme.commandmode;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.operators.multi.processors.BroadcastProcessor;
-import io.smallrye.mutiny.operators.multi.processors.UnicastProcessor;
+import org.eclipse.microprofile.context.ManagedExecutor;
 import org.eclipse.microprofile.reactive.messaging.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +24,10 @@ public class ProdConsService {
     @Channel("request")
     Emitter<String> emitter;
 
-    CustomExecutor executor = new CustomExecutor();
+    @Inject
+    ManagedExecutor executor;
+
+    //CustomExecutor executor = new CustomExecutor();
 
     //
     //UnicastProcessor<String> processor = UnicastProcessor.create();
@@ -68,6 +71,10 @@ public class ProdConsService {
 
         Uni<String> input = sendMessage(message);
         log.info("After Send Ack: {}", input);
+
+        Uni<String> trd = Uni.createFrom().multi(multi);
+        trd.runSubscriptionOn(executor).onItem().invoke(m -> log.info("Getting message {}", m))
+                .subscribe().with(item -> log.info("Sep Thread: {}", item));
 
         return resp;
     }
