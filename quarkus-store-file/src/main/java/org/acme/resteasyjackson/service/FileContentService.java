@@ -27,7 +27,7 @@ public class FileContentService {
         fileContent.data = Base64Coder.decodeToByteArray(input.content);
         fileContent.persist();
 
-        System.out.println("Filecontent ID: " + fileContent.getId());
+        //System.out.println("Filecontent ID within Transaction: " + fileContent.getId());
         return fileContent;
     }
 }
