@@ -11,18 +11,4 @@
 
   <artifactId>quarkus-rest-secure</artifactId>
 
-  <dependencies>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-resteasy-jackson</artifactId>
-    </dependency>
-
-
-  </dependencies>
-
-  <build>
-    <plugins>
-
-    </plugins>
-  </build>
 </project>

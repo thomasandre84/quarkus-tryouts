@@ -4,6 +4,7 @@ import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.operators.multi.processors.BroadcastProcessor;
 import org.eclipse.microprofile.context.ManagedExecutor;
+import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.reactive.messaging.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +47,7 @@ public class ProdConsService {
 
     @Incoming("request-in")
     @Outgoing("response")
+    @Traced
     public Uni<String> doResponse(String message) {
         String out = message + LocalDateTime.now().toString();
         log.info("Modified Outgoing " +
@@ -54,6 +56,7 @@ public class ProdConsService {
     }
 
     @Incoming("response-in")
+    @Traced
     public void respond(String message) {
         log.info("Incoming Response: {}", message);
         processor.onNext(message);

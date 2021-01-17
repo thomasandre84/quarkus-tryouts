@@ -14,10 +14,7 @@ pipeline {
 	stages {
 		stage("Build") {
 			steps {
-				sh "mvn clean install -f parent-pom/pom.xml"
-				sh "mvn clean package -f ${GRPC}/pom.xml"
-				sh "mvn clean package -f ${REACTIVE_REST}/pom.xml"
-				sh "mvn clean package -f ${JMS}/pom.xml"
+				sh "mvn clean install"
 			}
 
 			/*post {
