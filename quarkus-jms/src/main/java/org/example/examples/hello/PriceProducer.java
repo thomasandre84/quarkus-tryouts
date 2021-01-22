@@ -19,7 +19,7 @@ import io.quarkus.runtime.StartupEvent;
  * A bean producing random prices every 5 seconds and sending them to the prices JMS queue.
  */
 @ApplicationScoped
-public class PriceProducer implements Runnable {
+public class PriceProducerZ  implements Runnable {
 
     @Inject
     ConnectionFactory connectionFactory;
