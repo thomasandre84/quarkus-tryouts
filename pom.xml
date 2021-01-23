@@ -15,7 +15,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <quarkus.platform.artifact-id>quarkus-universe-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
-    <quarkus.platform.version>1.10.5.Final</quarkus.platform.version>
+    <quarkus.platform.version>1.11.0.Final</quarkus.platform.version>
     <surefire-plugin.version>2.22.1</surefire-plugin.version>
     <grpc.version>1.30.0</grpc.version>
     <protoc.version>3.12.3</protoc.version>
@@ -41,9 +41,19 @@
     <module>quarkus-reactive-rest</module>
     <!--<module>quarkus-rest-secure</module>-->
     <module>quarkus-kafka</module>
+    <module>quarkus-store-file</module>
   </modules>
 
   <dependencies>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.16</version>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-resteasy-jackson</artifactId>
+    </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-junit5</artifactId>
