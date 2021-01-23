@@ -5,6 +5,7 @@ import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.infrastructure.Infrastructure;
 import io.smallrye.mutiny.operators.multi.processors.BroadcastProcessor;
 
+import io.smallrye.mutiny.subscription.MultiEmitter;
 import org.apache.kafka.common.TopicPartition;
 import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.reactive.messaging.*;
