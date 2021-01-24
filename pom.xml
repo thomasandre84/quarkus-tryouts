@@ -42,6 +42,7 @@
     <!--<module>quarkus-rest-secure</module>-->
     <module>quarkus-kafka</module>
     <module>quarkus-store-file</module>
+    <module>quarkus-parallel-batch</module>
   </modules>
 
   <dependencies>
