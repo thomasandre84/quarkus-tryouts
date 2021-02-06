@@ -36,9 +36,9 @@ public class ProdConsService {
     public void sendMessage(String test) {
         log.info("Outgoing: {}", test);
         log.info("Listening to the following Partitions: {}", kafkaRebalancedConsumerRebalanceListener.getTopicPartitions());
-        TopicPartition target = kafkaRebalancedConsumerRebalanceListener.getTopicPartitions().get(0);
+        TopicPartition target = kafkaRebalancedConsumerRebalanceListener.getTopicPartitions().get(4);
         Metadata metadata = Metadata.of(target);
-        Message<String> message = Message.of(test, Collections.singleton(target));
+        Message<String> message = Message.of(test, metadata);
 
         emitter.send(message);
         /*        () -> {
