@@ -6,6 +6,7 @@ import io.smallrye.mutiny.infrastructure.Infrastructure;
 import io.smallrye.mutiny.operators.multi.processors.BroadcastProcessor;
 
 import io.smallrye.mutiny.subscription.MultiEmitter;
+import io.smallrye.reactive.messaging.kafka.IncomingKafkaRecordMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.reactive.messaging.*;
@@ -17,6 +18,7 @@ import javax.inject.Inject;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -36,7 +38,7 @@ public class ProdConsService {
     public void sendMessage(String test) {
         log.info("Outgoing: {}", test);
         log.info("Listening to the following Partitions: {}", kafkaRebalancedConsumerRebalanceListener.getTopicPartitions());
-        TopicPartition target = kafkaRebalancedConsumerRebalanceListener.getTopicPartitions().get(4);
+        TopicPartition target = kafkaRebalancedConsumerRebalanceListener.getTopicPartitions().get(0);
         Metadata metadata = Metadata.of(target);
         Message<String> message = Message.of(test, metadata);
 
@@ -53,7 +55,9 @@ public class ProdConsService {
     @Traced
     public Uni<Message<String>> doResponse(Message<String> message) {
         String out = message.getPayload() + LocalDateTime.now().toString();
-        message.getMetadata().forEach(m -> log.info("Metadata in Message: {}", m));
+        //message.getMetadata().forEach(m -> log.info("Metadata in Message: {}", m));
+        Optional<IncomingKafkaRecordMetadata> metadata = message.getMetadata(IncomingKafkaRecordMetadata.class);
+
         log.info("Modified Outgoing " +
                 "Response: {}", out);
         Message m2 = Message.of(out, message.getMetadata());
