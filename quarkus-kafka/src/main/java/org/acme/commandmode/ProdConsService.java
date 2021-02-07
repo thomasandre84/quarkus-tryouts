@@ -22,13 +22,17 @@ import java.math.BigInteger;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.atomic.AtomicReference;
+
 
 @ApplicationScoped
 public class ProdConsService {
     static Logger log = LoggerFactory.getLogger(ProdConsService.class);
+    static final String CUSTOM = "custom";
     static final String PARTITION = "partition";
+    static final String ID = "id";
 
     BroadcastProcessor<Message<String>> processor = BroadcastProcessor.create();
 
@@ -39,22 +43,34 @@ public class ProdConsService {
     @Channel("request")
     Emitter<String> emitter;
 
-    public void sendMessage(String test) {
+    public UUID sendMessage(String test) {
         log.info("Outgoing: {}", test);
         log.info("Listening to the following Partitions: {}", kafkaRebalancedConsumerRebalanceListener.getTopicPartitions());
-        TopicPartition target = kafkaRebalancedConsumerRebalanceListener.getTopicPartitions().get(3);
+        int partitionSize = kafkaRebalancedConsumerRebalanceListener.getTopicPartitions().size();
+        int partitionIndex = new Random().nextInt(partitionSize);
+        TopicPartition target = kafkaRebalancedConsumerRebalanceListener.getTopicPartitions().get(partitionIndex);
         BigInteger targetPartition = BigInteger.valueOf(target.partition());
-        OutgoingKafkaRecordMetadata<String> metadataPartition = OutgoingKafkaRecordMetadata.<String>builder()
-                .withKey(PARTITION)
-                .withHeaders(new RecordHeaders().add(PARTITION, targetPartition.toByteArray()))
-                //.withPartition(target.partition())
+        UUID id = UUID.randomUUID();
+        OutgoingKafkaRecordMetadata<String> metadataCustom = OutgoingKafkaRecordMetadata.<String>builder()
+                .withKey(CUSTOM)
+                .withHeaders(new RecordHeaders()
+                        .add(PARTITION, targetPartition.toByteArray())
+                        .add(ID, id.toString().getBytes())
+                )
                 .build();
 
-        Metadata metadata = Metadata.of(metadataPartition);
+
+        OutgoingKafkaRecordMetadata<String> metadataID = OutgoingKafkaRecordMetadata.<String>builder()
+                .withKey(ID)
+                .withHeaders(new RecordHeaders().add(ID, id.toString().getBytes()))
+                .build();
+
+        Metadata metadata = Metadata.of(metadataCustom);
         Message<String> message = Message.of(test, metadata);
         //message.addMetadata(metadataPartition);
 
         emitter.send(message);
+        return id;
         /*        () -> {
                     // Called when the message is acknowledged.
                     return CompletableFuture.completedFuture(null);
@@ -72,6 +88,7 @@ public class ProdConsService {
         //metadata.get().getHeaders().forEach(header -> log.info("header: key: {}, Value: {}", header.key(), new BigInteger(header.value())));
         Optional<OutgoingKafkaRecordMetadata<String>> metadataPartition = getTargetPartition(message.getMetadata(IncomingKafkaRecordMetadata.class));
 
+        // Also extract UUID and add it again to metadata
         Metadata metaOut = Metadata.of(metadataPartition.get());
         log.info("Modified Outgoing " +
                 "Response: {}", out);
@@ -97,6 +114,20 @@ public class ProdConsService {
         return Optional.empty();
     }
 
+    private Optional<UUID> getId(Optional<IncomingKafkaRecordMetadata> metadata) {
+
+        if (metadata.isPresent()) {
+            Headers headers = metadata.get().getHeaders();
+            for (Header header : headers)
+                if (ID.equals(header.key())) {
+                    UUID id = UUID.nameUUIDFromBytes(header.value());
+
+                    return Optional.of(id);
+                }
+        }
+        return Optional.empty();
+    }
+
     @Incoming("response-in")
     @Traced
     public CompletionStage<Void> respond(Message<String> message) {
@@ -106,7 +137,7 @@ public class ProdConsService {
     }
 
     public Uni<String> process(String message) {
-        sendMessage(message);
+        UUID id = sendMessage(message);
         return Uni.createFrom().multi(processor)
                 //.onItem().invoke(() -> sendMessage(message))
                 .onItem().transform(Message::getPayload)
