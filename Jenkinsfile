@@ -5,6 +5,7 @@ pipeline {
 	parameters {
         booleanParam(name: 'docker', description: 'Build Docker Image', defaultValue: 'false')
 		booleanParam(name: 'sonar', description: 'Scan Sonar', defaultValue: 'false')
+		booleanParam(name: 'native', description: 'Build native images', defaultValue: 'false')
     }
 	environment {
 		GRPC = 'quarkus-grpc'
@@ -30,6 +31,14 @@ pipeline {
 					notifySlack("Build Failure", "danger")
 				}
 			}*/
+		}
+		stage('SonarQube analysis') {
+			when {
+				expression { params.native }
+			}
+			steps {
+				sh "mvn clean package -Pnative"
+			}
 		}
 
 		stage('SonarQube analysis') {
