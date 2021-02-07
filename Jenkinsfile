@@ -32,7 +32,7 @@ pipeline {
 				}
 			}*/
 		}
-		stage('SonarQube analysis') {
+		stage('Build native Images') {
 			when {
 				expression { params.native }
 			}
