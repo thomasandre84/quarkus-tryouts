@@ -32,7 +32,7 @@ pipeline {
 				}
 			}*/
 		}
-		stage('Build native Images') {
+		stage('Build native') {
 			when {
 				expression { params.native }
 			}
