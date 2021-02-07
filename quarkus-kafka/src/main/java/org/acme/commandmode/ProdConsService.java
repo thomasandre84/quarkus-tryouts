@@ -1,6 +1,5 @@
 package org.acme.commandmode;
 
-import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.TimeoutException;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.infrastructure.Infrastructure;
@@ -44,7 +43,7 @@ public class ProdConsService {
     @Channel("request")
     Emitter<String> emitter;
 
-    public UUID sendMessage(String test) {
+    public String sendMessage(String test) {
         log.info("Outgoing: {}", test);
         log.info("Listening to the following Partitions: {}", kafkaRebalancedConsumerRebalanceListener.getTopicPartitions());
         int partitionSize = kafkaRebalancedConsumerRebalanceListener.getTopicPartitions().size();
@@ -52,19 +51,19 @@ public class ProdConsService {
         TopicPartition target = kafkaRebalancedConsumerRebalanceListener.getTopicPartitions().get(partitionIndex); // for tests choose a fix partition
         BigInteger targetPartition = BigInteger.valueOf(target.partition());
         log.info("Identified TargetPartition: {}", targetPartition);
-        UUID id = UUID.randomUUID();
+        String id = UUID.randomUUID().toString();
+        log.info("Generated UUID: {}", id);
         OutgoingKafkaRecordMetadata<String> metadataCustom = OutgoingKafkaRecordMetadata.<String>builder()
                 .withKey(CUSTOM)
                 .withHeaders(new RecordHeaders()
                         .add(PARTITION, targetPartition.toByteArray())
-                        .add(ID, id.toString().getBytes())
+                        .add(ID, id.getBytes())
                 )
                 .build();
 
 
         Metadata metadata = Metadata.of(metadataCustom);
         Message<String> message = Message.of(test, metadata);
-        //message.addMetadata(metadataPartition);
 
         emitter.send(message);
         return id;
@@ -84,12 +83,12 @@ public class ProdConsService {
         //Optional<IncomingKafkaRecordMetadata> metadata = message.getMetadata(IncomingKafkaRecordMetadata.class);
         //metadata.get().getHeaders().forEach(header -> log.info("header: key: {}, Value: {}", header.key(), new BigInteger(header.value())));
         Optional<Integer> targetPartition = getTargetPartition(message.getMetadata(IncomingKafkaRecordMetadata.class));
-        Optional<UUID> id = getId(message.getMetadata(IncomingKafkaRecordMetadata.class));
+        Optional<String> id = getId(message.getMetadata(IncomingKafkaRecordMetadata.class));
         // Also extract UUID and add it again to metadata
         OutgoingKafkaRecordMetadata<String> metadataCustom = OutgoingKafkaRecordMetadata.<String>builder()
                 .withKey(CUSTOM)
                 .withHeaders(new RecordHeaders()
-                        .add(ID, id.get().toString().getBytes())
+                        .add(ID, id.get().getBytes())
                 )
                 .withPartition(targetPartition.get())
                 .build();
@@ -117,13 +116,13 @@ public class ProdConsService {
         return Optional.empty();
     }
 
-    private Optional<UUID> getId(Optional<IncomingKafkaRecordMetadata> metadata) {
+    private Optional<String> getId(Optional<IncomingKafkaRecordMetadata> metadata) {
 
         if (metadata.isPresent()) {
             Headers headers = metadata.get().getHeaders();
             for (Header header : headers)
                 if (ID.equals(header.key())) {
-                    UUID id = UUID.nameUUIDFromBytes(header.value());
+                    String id = new String(header.value());
                     log.info("Got UUID of: {}", id);
                     return Optional.of(id);
                 }
@@ -134,22 +133,22 @@ public class ProdConsService {
     @Incoming("response-in")
     @Traced
     public CompletionStage<Void> respond(Message<String> message) {
-        log.info("Incoming Response: {}", message.getPayload());
+        log.info("Incoming Response Payload: {}", message.getPayload());
+        log.info("Incoming Response ID: {}", getId(message.getMetadata(IncomingKafkaRecordMetadata.class)).get());
         processor.onNext(message);
         return message.ack();
     }
 
-    public Uni<String> process(String message) {
-        UUID id = sendMessage(message);
-        /*Multi<Message<String>> multi = processor;
-        multi.filter(m -> id.equals(getId(m.getMetadata(IncomingKafkaRecordMetadata.class)).get()))
-                .onItem().invoke(t -> log.info("Received Filteres in Reactive Stream: {}", t))
-                .subscribe().with(
-                        item -> log.info("Item in Mulit: {}", item),
-                        f -> log.warn("Failed: ", f)
-                );*/
+    private boolean equalId(String initId, Optional<String> receivedId) {
+        String recId = receivedId.get();
+        log.info("Init Id {}  with received Id: {}", initId, recId);
+        return initId.equals(recId);
+    }
 
-        return Uni.createFrom().multi(processor) // to check, if this filter really works
+    public Uni<String> process(String message) {
+        String id = sendMessage(message);
+
+        return Uni.createFrom().multi(processor.filter(m -> equalId(id, getId(m.getMetadata(IncomingKafkaRecordMetadata.class))))) // to check, if this filter really works
                 //.onItem().invoke(() -> sendMessage(message))
                 .onItem().transform(Message::getPayload)
                 .onItem().invoke(t -> log.info("Received in Reactive Stream: {}", t))
