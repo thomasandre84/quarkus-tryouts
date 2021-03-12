@@ -20,9 +20,19 @@ public class FileResource {
     FileService fileService;
 
     @GET
+    @Path("/versions")
     public Multi<Object> getVersions() {
         return Multi.createFrom().empty();
     }
+
+    @POST
+    @Path("/versions")
+    public Uni<Response> saveVersion() {
+        return null;
+    }
+
+
+
     @GET
     @Path("/categories")
     public Multi<FileCategory> getCategories() {

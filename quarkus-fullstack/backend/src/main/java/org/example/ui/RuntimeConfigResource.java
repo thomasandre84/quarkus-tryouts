@@ -13,6 +13,5 @@ public class RuntimeConfigResource {
     @GET
     public Uni<Response> getRuntimeConfig() {
         return Uni.createFrom().item(Response.ok().build());
-
     }
 }
