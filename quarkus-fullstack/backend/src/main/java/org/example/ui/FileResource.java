@@ -4,14 +4,15 @@ import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 
 import static org.example.ui.FileResource.BASE_URL;
 
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 @Path(BASE_URL)
 public class FileResource {
     static final String BASE_URL = "api/v1/files";
@@ -21,17 +22,16 @@ public class FileResource {
 
     @GET
     @Path("/versions")
-    public Multi<Object> getVersions() {
-        return Multi.createFrom().empty();
+    public Multi<FileVersion> getVersions() {
+        return fileService.getVersions();
     }
 
     @POST
     @Path("/versions")
-    public Uni<Response> saveVersion() {
-        return null;
+    public Uni<Response> saveVersion(FileVersionInput versionInput) {
+        return fileService.persistVersion(versionInput)
+                .onItem().transform(v -> Response.ok(v).build());
     }
-
-
 
     @GET
     @Path("/categories")
@@ -41,8 +41,14 @@ public class FileResource {
 
     @POST
     @Path("/categories")
-    public Uni<Response> saveCategory(FileCategory fileCategory) {
-        return fileService.persistCategory(fileCategory)
+    public Uni<Response> saveCategory(FileCategoryInput category) {
+        return fileService.persistCategory(category)
                 .onItem().transform(f -> Response.ok(f).build());
+    }
+
+    @PATCH
+    @Path("/versions")
+    public Uni<Response> activateVersion() {
+        return Uni.createFrom().nullItem();
     }
 }

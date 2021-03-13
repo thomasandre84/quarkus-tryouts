@@ -7,6 +7,8 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
 
+
+
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
@@ -14,9 +16,11 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @IdClass(FileVersion.FileVersionId.class)
+@ToString
 public class FileVersion extends PanacheEntityBase {
+
     @Id
-    private Long version;
+    private Integer version;
 
     @Id
     private String name;
@@ -34,21 +38,14 @@ public class FileVersion extends PanacheEntityBase {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-
-
     @PrePersist
     public void created() {
         this.created = Instant.now();
     }
 
-    @PreUpdate
-    public void activated() {
-        this.activated = Instant.now();
-    }
-
     @EqualsAndHashCode
     static class FileVersionId implements Serializable {
-        Long version;
+        Integer version;
         String name;
         FileCategory category;
     }
