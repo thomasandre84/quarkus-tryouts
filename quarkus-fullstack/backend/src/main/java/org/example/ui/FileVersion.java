@@ -27,7 +27,7 @@ public class FileVersion extends PanacheEntityBase {
 
     @Id
     @ManyToOne
-    @JoinColumn(nullable = false)
+    @JoinColumn(nullable = false, name = "category")
     private FileCategory category;
 
     private Instant created;
