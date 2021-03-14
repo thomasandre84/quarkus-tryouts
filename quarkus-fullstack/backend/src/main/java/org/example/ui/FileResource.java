@@ -1,7 +1,10 @@
 package org.example.ui;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
+import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -28,9 +31,19 @@ public class FileResource {
 
     @POST
     @Path("/versions")
-    public Uni<Response> saveVersion(FileVersionInput versionInput) {
-        return fileService.persistVersion(versionInput)
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Uni<Response> saveVersion(@MultipartForm MultipartFormDataInput input) throws JsonProcessingException {
+        return fileService.persistVersion(input)
                 .onItem().transform(v -> Response.ok(v).build());
+    }
+
+    @GET
+    @Path("/versions/download")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Uni<byte[]> downloadVersion(@QueryParam("name") String name,
+                                       @QueryParam("category") String category,
+                                       @QueryParam("version") Integer version) {
+        return fileService.downloadContent(name, category, version);
     }
 
     @GET

@@ -10,5 +10,4 @@ public class FileVersionInput {
     private String name;
     @NotBlank
     private String category;
-    private String content;
 }

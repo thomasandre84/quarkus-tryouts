@@ -1,5 +1,6 @@
 package org.example.ui;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import lombok.*;
 
@@ -36,6 +37,7 @@ public class FileVersion extends PanacheEntityBase {
 
     //@Lob // For LONGTEXT
     @Column(columnDefinition = "TEXT")
+    @JsonIgnore
     private String content;
 
     @PrePersist

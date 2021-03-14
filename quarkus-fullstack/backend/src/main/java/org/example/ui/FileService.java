@@ -1,10 +1,18 @@
 package org.example.ui;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.panache.common.Parameters;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.jboss.resteasy.plugins.providers.multipart.InputPart;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.List;
 
@@ -13,6 +21,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.ws.rs.NotFoundException;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -20,6 +29,8 @@ import java.util.stream.Stream;
 @Slf4j
 @ApplicationScoped
 public class FileService {
+
+    static ObjectMapper mapper = new ObjectMapper();
 
     @Inject
     EntityManager em;
@@ -44,6 +55,10 @@ public class FileService {
         return FileCategory.findByIdOptional(category);
     }
 
+    private static FileVersion getFileVersion(FileVersion.FileVersionId id) {
+        return FileVersion.findById(id);
+    }
+
 
 
     public Multi<FileCategory> getCategories() {
@@ -64,10 +79,36 @@ public class FileService {
                 .items(FileVersion.findAll().stream());
     }
 
+    public Uni<byte[]> downloadContent(String name, String category, Integer version) {
+        Optional<FileCategory> fileCategory = getCategory(category);
+        if (fileCategory.isPresent()) {
+            FileVersion.FileVersionId id = FileVersion.FileVersionId.builder()
+                    .name(name).category(fileCategory.get()).version(version).build();
+
+            return Uni.createFrom().item(id)
+                    .onItem().transform(FileService::getFileVersion)
+                    .onItem().transform(FileVersion::getContent)
+                    .onItem().transform(content -> content.getBytes(StandardCharsets.UTF_8));
+        }
+        return Uni.createFrom().nullItem();
+    }
+
     @Transactional
-    public synchronized Uni<FileVersion> persistVersion(FileVersionInput versionInput) {
+    public synchronized Uni<FileVersion> persistVersion(MultipartFormDataInput input) throws JsonProcessingException {
+        Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
+        String obj = getStringData(getRelevantInputPart(uploadForm.get("obj")));
+        FileVersionInput versionInput = mapper.readValue(obj, FileVersionInput.class);
+
         Optional<FileCategory> category = getCategory(versionInput.getCategory());
+
         if (category.isPresent()) {
+            // Do the work only, if the relevant data fields are correct
+            List<InputPart> fileInputParts = uploadForm.get("file");
+            InputPart fileInputPart = getRelevantInputPart(fileInputParts);
+            byte[] data = getFileData(fileInputPart);
+            assert data != null;
+            String content = new String(data);
+
             Integer version = getNextVersion(versionInput.getName(), category.get());
             return Uni.createFrom()
                     .item(versionInput)
@@ -75,7 +116,7 @@ public class FileService {
                             .version(version)
                             .name(versionInput.getName())
                             .category(category.get())
-                            .content(versionInput.getContent())
+                            .content(content)
                             .build()
                     )
                     .onItem().invoke(FileService::accept);
@@ -120,5 +161,30 @@ public class FileService {
         } else {
             return versions.stream().max(Integer::compare).get() + 1;
         }
+    }
+
+    private InputPart getRelevantInputPart(List<InputPart> inputParts) {
+        return inputParts.get(0);
+    }
+
+
+    private byte[] getFileData(InputPart inputPart) {
+        try {
+            InputStream inputStream = inputPart.getBody(InputStream.class, null);
+            return IOUtils.toByteArray(inputStream);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private String getStringData(InputPart inputPart) {
+        try {
+            return inputPart.getBody(String.class, null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
