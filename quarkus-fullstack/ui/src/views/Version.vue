@@ -4,5 +4,19 @@
     <button>
       <router-link to="/category">Category</router-link>
     </button>
+    <versions></versions>
   </div>
 </template>
+
+<script lang="ts">
+import Versions from '../components/Versions.vue'
+import {Options, Vue} from "vue-class-component";
+
+@Options({
+  components: {
+    Versions,
+  },
+})
+
+export default class Version extends Vue {}
+</script>
