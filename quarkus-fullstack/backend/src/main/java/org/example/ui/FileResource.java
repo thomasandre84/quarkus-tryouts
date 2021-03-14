@@ -48,7 +48,8 @@ public class FileResource {
 
     @PATCH
     @Path("/versions")
-    public Uni<Response> activateVersion() {
-        return Uni.createFrom().nullItem();
+    public Uni<Response> activateVersion(FileVersionActive fileVersionActive) {
+        return fileService.setVersionActive(fileVersionActive)
+                .onItem().transform(v -> Response.ok().build());
     }
 }

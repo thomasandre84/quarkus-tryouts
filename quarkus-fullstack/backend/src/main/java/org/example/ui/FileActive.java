@@ -26,9 +26,12 @@ public class FileActive extends PanacheEntityBase {
     @ManyToOne
     private FileCategory category;
 
-    private Long active;
+    private Integer active;
 
     @EqualsAndHashCode
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     static class FileActiveId implements Serializable  {
         FileVersion version;
         FileCategory category;

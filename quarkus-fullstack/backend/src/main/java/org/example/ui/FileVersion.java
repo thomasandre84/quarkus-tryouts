@@ -44,6 +44,9 @@ public class FileVersion extends PanacheEntityBase {
     }
 
     @EqualsAndHashCode
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     static class FileVersionId implements Serializable {
         Integer version;
         String name;
