@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "vue": "^3.0.4",
+    "vue-class-component": "^8.0.0-0",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0"
   },
@@ -15,6 +16,7 @@
     "@vue/cli-plugin-typescript": "~4.5.0",
     "@vue/cli-plugin-vuex": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.4",
+    "typescript": "~3.9.3",
     "vite": "^1.0.0-rc.13"
   }
 }
