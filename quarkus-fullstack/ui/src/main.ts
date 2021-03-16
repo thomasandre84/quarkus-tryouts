@@ -5,10 +5,11 @@ import router from './router'
 //import store from './store'
 import { store, key } from './store'
 import axios from 'axios'
-import VueAxios from 'vue-axios'
+//import VueAxios from 'vue-axios'
+
+axios.defaults.baseURL = process.env.VUE_APP_API
 
 createApp(App)
     .use(store, key)
     .use(router)
-    .use(VueAxios, axios)
     .mount('#app')
