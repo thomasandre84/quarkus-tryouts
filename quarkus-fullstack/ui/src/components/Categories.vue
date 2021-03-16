@@ -1,13 +1,30 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
+    <!--<h1>{{ msg }}</h1>-->
     <!--<button @click="logBaseUrl()">logBaseUrl</button>-->
-    <ul>
+    <!--<ul>
       <button @click="fetchCategories()">update Categories</button>
-    </ul>
+    </ul>-->
+    <button @click="addCategory()">Create Category</button>
+    <div>
     <ul>
-      <!--<li v-for="cat in categories"-->
+      <li v-for="cat in categories">
+        <div class="mainContainer">
+          <span>{{cat.category}}</span> {{cat.created}}
+        </div>
+      </li>
     </ul>
+    </div>
+    <br>
+    <div v-if="addCat">
+      <p>Add Category</p>
+      <form @submit.prevent="submitForm">
+        <label for="catName">Category Name</label>
+        <input type="text" name="catName" id="catName" v-model.trim="catName">
+      <p>{{catName}}</p>
+      <button @click="saveCategory()">Save Category</button>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -22,15 +39,16 @@ export default {
     const root = ref(null)
     const axios = require('axios')
     const categories: category[] = []
+    let addCat = ref(false)
+    let catName = ref('')
 
 
     function fetchCategories() {
       axios.get("/v1/files/categories")
-          .then((res: any) => JSON.stringify(res))
-          .then((res: category[]) => {
-            console.log(res);
+          .then((res: any) => {
+            //console.log(res);
             categories.length = 0;
-            res.forEach((cat: category) => {
+            res.data.forEach((cat: category) => {
               categories.push(cat);
             })
           })
@@ -41,13 +59,35 @@ export default {
       console.log(`VUE App API: ${process.env.VUE_APP_API}`);
     }
 
+    function addCategory() {
+      console.log(addCat)
+      addCat.value = ! addCat.value;
+    }
+
+    function saveCategory() {
+      console.log(`Save category: ${catName.value}`)
+      axios.post('/v1/files/categories', {
+        category: catName.value
+      })
+          .then((res: any) => console.log(res))
+          .catch((err: any) => console.log(err))
+
+      addCategory()
+      fetchCategories()
+    }
+
     onMounted(() => {
-      console.log(fetchCategories())
+      fetchCategories()
     })
 
     return {
       categories,
-      fetchCategories
+      fetchCategories,
+      addCategory,
+      addCat,
+      //boolAddCat
+      catName,
+      saveCategory
     }
   }
 

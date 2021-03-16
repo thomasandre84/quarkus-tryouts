@@ -8,7 +8,6 @@
   "dependencies": {
     "axios": "^0.21.1",
     "vue": "^3.0.4",
-    "vue-axios": "^3.2.4",
     "vue-class-component": "^8.0.0-0",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0"
@@ -17,8 +16,8 @@
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-plugin-typescript": "~4.5.0",
     "@vue/cli-plugin-vuex": "~4.5.0",
-    "@vue/compiler-sfc": "^3.0.4",
     "@vue/cli-service": "^4.5.11",
+    "@vue/compiler-sfc": "^3.0.4",
     "typescript": "~3.9.3"
   }
 }
