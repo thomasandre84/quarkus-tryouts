@@ -1,8 +1,13 @@
-package org.example.ui;
+package org.example.ui.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
+import org.example.ui.dto.FileCategoryInput;
+import org.example.ui.model.FileCategory;
+import org.example.ui.model.FileVersion;
+import org.example.ui.model.FileVersionActive;
+import org.example.ui.service.FileService;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
@@ -12,7 +17,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 
-import static org.example.ui.FileResource.BASE_URL;
+import static org.example.ui.resource.FileResource.BASE_URL;
 
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)

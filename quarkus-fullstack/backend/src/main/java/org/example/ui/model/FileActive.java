@@ -1,4 +1,4 @@
-package org.example.ui;
+package org.example.ui.model;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import lombok.*;
@@ -17,10 +17,16 @@ public class FileActive extends PanacheEntityBase {
 
     @Id
     @ManyToOne
+    @JoinColumns({
+            @JoinColumn(name = "version", referencedColumnName = "version"),
+            @JoinColumn(name = "template_name", referencedColumnName = "name"),
+            @JoinColumn(name = "template_category", referencedColumnName = "category")
+    })
     private FileVersion version;
 
     @Id
     @ManyToOne
+    @JoinColumn(nullable = false, name = "category")
     private FileCategory category;
 
     private Integer active;
@@ -29,7 +35,7 @@ public class FileActive extends PanacheEntityBase {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    static class FileActiveId implements Serializable  {
+    public static class FileActiveId implements Serializable  {
         FileVersion version;
         FileCategory category;
     }

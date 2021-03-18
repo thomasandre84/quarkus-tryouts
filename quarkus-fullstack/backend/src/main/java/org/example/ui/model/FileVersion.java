@@ -1,4 +1,4 @@
-package org.example.ui;
+package org.example.ui.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
@@ -49,7 +49,7 @@ public class FileVersion extends PanacheEntityBase {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    static class FileVersionId implements Serializable {
+    public static class FileVersionId implements Serializable {
         Integer version;
         String name;
         FileCategory category;

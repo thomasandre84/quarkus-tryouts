@@ -1,4 +1,4 @@
-package org.example.ui;
+package org.example.ui.resource;
 
 import io.smallrye.mutiny.Uni;
 

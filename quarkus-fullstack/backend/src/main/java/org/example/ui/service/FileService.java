@@ -1,4 +1,4 @@
-package org.example.ui;
+package org.example.ui.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,6 +7,12 @@ import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.example.ui.dto.FileCategoryInput;
+import org.example.ui.dto.FileVersionInput;
+import org.example.ui.model.FileActive;
+import org.example.ui.model.FileCategory;
+import org.example.ui.model.FileVersion;
+import org.example.ui.model.FileVersionActive;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
