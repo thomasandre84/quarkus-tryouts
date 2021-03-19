@@ -8,7 +8,7 @@
     <button @click="addCategory()">Create Category</button>
     <div>
     <ul>
-      <li v-for="cat in categories">
+      <li v-for="cat in categors">
         <div class="mainContainer">
           <span>{{cat.category}}</span> {{cat.created}}
         </div>
@@ -20,9 +20,9 @@
       <p>Add Category</p>
       <form @submit.prevent="submitForm">
         <label for="catName">Category Name</label>
-        <input type="text" name="catName" id="catName" v-model.trim="catName">
+        <input type="text" name="catName" id="catName" v-bind="catName">
       <p>{{catName}}</p>
-      <button @click="saveCategory()">Save Category</button>
+      <button @click="saveCat()">Save Category</button>
       </form>
     </div>
   </div>
@@ -30,64 +30,42 @@
 
 <script lang="ts">
 import { ref, onMounted } from 'vue'
-interface category {
-  name: string,
-  created: string
-}
+import {fetchCategories, categories, saveCategory} from '../services/CategoryService'
+
 export default {
   setup() {
     const root = ref(null)
     const axios = require('axios')
-    const categories: category[] = []
-    let addCat = ref(false)
-    let catName = ref('')
-
-
-    function fetchCategories() {
-      axios.get("/v1/files/categories")
-          .then((res: any) => {
-            //console.log(res);
-            categories.length = 0;
-            res.data.forEach((cat: category) => {
-              categories.push(cat);
-            })
-          })
-          .catch((err: any) => console.log(`Error: ${err}` ))
-    }
-
-    function logBaseUrl() {
-      console.log(`VUE App API: ${process.env.VUE_APP_API}`);
-    }
+    //const categories: category[] = []
+    const addCat = ref(false)
+    const catName = ref('')
+    const categors = ref(categories)
 
     function addCategory() {
       console.log(addCat)
       addCat.value = ! addCat.value;
     }
 
-    function saveCategory() {
+    function saveCat() {
       console.log(`Save category: ${catName.value}`)
-      axios.post('/v1/files/categories', {
-        category: catName.value
-      })
-          .then((res: any) => console.log(res))
-          .catch((err: any) => console.log(err))
-
+      saveCategory(catName.value)
       addCategory()
       fetchCategories()
     }
 
     onMounted(() => {
+      console.log('Mounting Categories')
       fetchCategories()
     })
 
     return {
-      categories,
-      fetchCategories,
+      categors,
+      //fetchCategories,
       addCategory,
       addCat,
       //boolAddCat
       catName,
-      saveCategory
+      saveCat
     }
   }
 
