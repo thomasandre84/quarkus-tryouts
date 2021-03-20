@@ -29,6 +29,7 @@ import { ref, onMounted, watch } from 'vue'
 export default {
   setup() {
     const axios = require('axios')
+    const uri = '/v1/files/categories'
     const addCat = ref(false)
     const catName = ref('')
     const categories = ref([])
@@ -41,13 +42,13 @@ export default {
     function saveCat() {
       console.log(`Save category: ${catName.value}`)
       const formData = {category: catName.value}
-      axios.post( '/v1/files/categories', formData)
+      axios.post( uri, formData)
       .then((res: any) => console.log(res))
       .catch((err: any) => console.log(err))
     }
 
     function fetchCategories() {
-      axios.get('/v1/files/categories')
+      axios.get(uri)
       .then((res: any) => categories.value = res.data)
       .catch((err: any) => console.log(err))
     }
