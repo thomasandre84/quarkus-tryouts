@@ -1,16 +1,11 @@
 <template>
   <div class="hello">
-    <!--<h1>{{ msg }}</h1>-->
-    <!--<button @click="logBaseUrl()">logBaseUrl</button>-->
-    <!--<ul>
-      <button @click="fetchCategories()">update Categories</button>
-    </ul>-->
     <button @click="addCategory()">Create Category</button>
     <div>
     <ul>
-      <li v-for="cat in categors">
+      <li v-for="cat in categories">
         <div class="mainContainer">
-          <span>{{cat.category}}</span> {{cat.created}}
+          <span>{{ cat.category }}</span> {{ cat.created }}
         </div>
       </li>
     </ul>
@@ -20,7 +15,7 @@
       <p>Add Category</p>
       <form @submit.prevent="submitForm">
         <label for="catName">Category Name</label>
-        <input type="text" name="catName" id="catName" v-bind="catName">
+        <input type="text" name="catName" id="catName" v-model="catName">
       <p>{{catName}}</p>
       <button @click="saveCat()">Save Category</button>
       </form>
@@ -29,17 +24,14 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted } from 'vue'
-import {fetchCategories, categories, saveCategory} from '../services/CategoryService'
+import { ref, onMounted, watch } from 'vue'
 
 export default {
   setup() {
-    const root = ref(null)
     const axios = require('axios')
-    //const categories: category[] = []
     const addCat = ref(false)
     const catName = ref('')
-    const categors = ref(categories)
+    const categories = ref([])
 
     function addCategory() {
       console.log(addCat)
@@ -48,9 +40,16 @@ export default {
 
     function saveCat() {
       console.log(`Save category: ${catName.value}`)
-      saveCategory(catName.value)
-      addCategory()
-      fetchCategories()
+      const formData = {category: catName.value}
+      axios.post( '/v1/files/categories', formData)
+      .then((res: any) => console.log(res))
+      .catch((err: any) => console.log(err))
+    }
+
+    function fetchCategories() {
+      axios.get('/v1/files/categories')
+      .then((res: any) => categories.value = res.data)
+      .catch((err: any) => console.log(err))
     }
 
     onMounted(() => {
@@ -58,12 +57,13 @@ export default {
       fetchCategories()
     })
 
+    watch(categories, fetchCategories)
+
     return {
-      categors,
+      categories,
       //fetchCategories,
       addCategory,
       addCat,
-      //boolAddCat
       catName,
       saveCat
     }
