@@ -25,10 +25,10 @@
 
 <script lang="ts">
 import { ref, onMounted, watch } from 'vue'
+import {fetchData, postData} from '../api/http'
 
 export default {
   setup() {
-    const axios = require('axios')
     const uri = '/v1/files/categories'
     const addCat = ref(false)
     const catName = ref('')
@@ -42,15 +42,11 @@ export default {
     function saveCat() {
       console.log(`Save category: ${catName.value}`)
       const formData = {category: catName.value}
-      axios.post( uri, formData)
-      .then((res: any) => console.log(res))
-      .catch((err: any) => console.log(err))
+      postData(uri, formData)
     }
 
     function fetchCategories() {
-      axios.get(uri)
-      .then((res: any) => categories.value = res.data)
-      .catch((err: any) => console.log(err))
+      fetchData(uri, categories)
     }
 
     onMounted(() => {
@@ -62,7 +58,6 @@ export default {
 
     return {
       categories,
-      //fetchCategories,
       addCategory,
       addCat,
       catName,

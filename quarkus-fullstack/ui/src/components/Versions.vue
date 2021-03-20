@@ -14,12 +14,9 @@
         <form @submit.prevent="submitForm">
           <label for="catName">Category Name Dropdown</label>
           <select id="catName" v-model="catName">
-            <option v-for="category in categories" value="category.name">{{category.name}}</option>
-            <option value="usa">USA</option>
-            <option value="india">India</option>
-            <option value="uk">UK</option>
-            <option value="germany">Germany</option>
+            <option v-for="category in categories" value="category.name">{{category.category}}</option>
           </select>
+
         </form>
       </div>
     </li>
@@ -31,28 +28,26 @@
 
 <script lang="ts">
 import { ref, onMounted, watch } from 'vue'
+import {fetchData, postData, putData} from '../api/http'
 
 export default {
   setup() {
     const versions = ref([])
     const categories = ref([])
-    const axios = require('axios')
+    //const axios = require('axios')
     const uri = '/v1/files/versions'
+    const uriCategories = '/v1/files/categories'
     const boolAdd = ref(false)
     const catName = ref('')
+    const download = ref(null)
 
     function fetchVersions() {
-      axios.get(uri)
-      .then((res: any) => {
-        versions.value = res.data
-      })
-      .catch((err: any) => console.log(err))
+      fetchData(uri, versions)
     }
 
     function fetchCategories() {
-      axios.get('/v1/files/categories')
-          .then((res: any) => categories.value = res.data)
-          .catch((err: any) => console.log(err))
+      console.log('Fetching cagories')
+      fetchData(uriCategories, categories)
     }
 
     function addVersion() {
@@ -64,17 +59,12 @@ export default {
 
     function saveVersion() {
       const formData = new FormData()
-
-      axios.post(uri, formData)
-      .then((res: any) => console.log(res))
-      .catch((err: any) => console.log(err))
+      postData(uri, formData)
     }
 
     function downloadVersion() {
       const queryParams = ''
-      axios.get(`${uri}${queryParams}`)
-      .then((res: any) => console.log(res))
-      .catch((err: any) => console.log(err))
+      fetchData(`${uri}${queryParams}`, download)
     }
 
     onMounted(() => {
@@ -89,7 +79,7 @@ export default {
       downloadVersion,
       addVersion,
       boolAdd,
-      fetchCategories,
+      //fetchCategories,
       catName,
       categories
     }
