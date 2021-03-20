@@ -24,6 +24,7 @@
   </ul>
   </div>
   <button @click="downloadVersion()">Download Version</button>
+  <button @click="logDownload()">Log Download</button>
 </template>
 
 <script lang="ts">
@@ -63,8 +64,13 @@ export default {
     }
 
     function downloadVersion() {
-      const queryParams = ''
+      // http://localhost:8080/api/v1/files/versions/download?category=test&name=test&version=1
+      const queryParams = '/download?category=test&name=test&version=1'
       fetchData(`${uri}${queryParams}`, download)
+    }
+
+    function logDownload() {
+      console.log(download.value)
     }
 
     onMounted(() => {
@@ -81,7 +87,8 @@ export default {
       boolAdd,
       //fetchCategories,
       catName,
-      categories
+      categories,
+      logDownload
     }
   }
 }

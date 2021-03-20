@@ -1,5 +1,6 @@
 package org.example.ui.resource;
 
+/*
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -34,4 +35,4 @@ public class UsersResource {
             return userName;
         }
     }
-}
+}*/

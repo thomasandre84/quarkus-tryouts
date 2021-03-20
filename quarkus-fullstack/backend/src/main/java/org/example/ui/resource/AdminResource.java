@@ -1,6 +1,6 @@
 package org.example.ui.resource;
 
-
+/*
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -22,3 +22,4 @@ public class AdminResource {
         return "Access for subject " + jwt.getSubject() + " is granted";
     }
 }
+*/
