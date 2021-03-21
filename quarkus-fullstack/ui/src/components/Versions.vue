@@ -1,16 +1,32 @@
 <template>
   <button @click="addVersion()">Add Version</button>
-  <div>
-  <ul>
-    <li v-for="version in versions">
-      <div>
-        {{version}}
-      </div>
-      <br>
-    </li>
+  <div class="center main">
+  <table>
+    <thead>
+    <tr>
+    <td>category</td><td>name</td><td>created</td><td>activated</td><td>action</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr v-for="version in versions">
+      <!--<div class="blockquote blockList">
+        <span>{{version.category.category}} | {{version.name}} | {{version.created}} | {{version.activated}}</span>
+        <button @click="downloadVersion(version.version, version.name, version.category.category)">Download Version</button>
+
+      </div>-->
+      <td>{{version.category.category}}</td><td>{{version.name}}</td><td>{{new Date(version.created * 1000)}}</td>
+      <td>{{new Date(version.activated * 1000)}}</td>
+      <td>
+        <button @click="downloadVersion(version.version, version.name, version.category.category)">Download Version</button>
+        <button @click="activateVersion(version.version, version.name, version.category.category)">Activate Version</button>
+
+      </td>
+    </tr>
+    </tbody>
+  </table>
     <br>
-    <li v-if="boolAdd">
-      <div>
+
+      <div v-if="boolAdd">
         add a Version
         <form @submit.prevent="submitForm">
           <label for="catName">Category Name Dropdown</label>
@@ -24,12 +40,8 @@
           <button>Save Version</button>
         </form>
       </div>
-    </li>
 
-  </ul>
   </div>
-  <button @click="downloadVersion()">Download Version</button>
-  <button @click="logDownload()">Log Download</button>
 </template>
 
 <script lang="ts">
@@ -74,19 +86,20 @@ export default {
       postData(uri, formData)
     }
 
-    function downloadVersion() {
+    function downloadVersion(version: bigint, name: string, category: string) {
       // http://localhost:8080/api/v1/files/versions/download?category=test&name=test&version=1
-      const queryParams = '/download?category=test&name=test&version=1'
+      const queryParams = `/download?category=${category}&name=${name}&version=${version}`
       //fetchData(`${uri}${queryParams}`, download)
-      downloadDataAsHtmlFile(`${uri}${queryParams}`, 'version')
+      downloadDataAsHtmlFile(`${uri}${queryParams}`, `${name}_${version}`)
     }
 
-    function activateVersion() {
+    function activateVersion(version: bigint, name: string, category: string) {
       const fd = {
-        category: "string",
-        name: "string",
-        version: 1
+        category: category,
+        name: name,
+        version: version
       }
+      console.log(fd)
       putData(`${uri}/active`, fd)
     }
 
@@ -124,7 +137,8 @@ export default {
       categories,
       logDownload,
       submitForm,
-      onFileSelected
+      onFileSelected,
+      activateVersion
     }
   }
 }
@@ -140,7 +154,7 @@ ul {
   padding: 0;
 }
 li {
-  display: inline-block;
+  //display: inline-block;
   margin: 0 10px;
 }
 a {
