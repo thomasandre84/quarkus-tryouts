@@ -65,7 +65,7 @@ public class FileResource {
     }
 
     @PUT
-    @Path("/versions")
+    @Path("/versions/active")
     public Uni<Response> activateVersion(FileVersionActive fileVersionActive) {
         return fileService.setVersionActive(fileVersionActive)
                 .onItem().transform(v -> Response.ok().build());

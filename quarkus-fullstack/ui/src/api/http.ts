@@ -15,3 +15,9 @@ export function putData(uri: string, formData: any) {
     axios.put(uri, formData)
         .catch((err: any) => console.log(err))
 }
+
+export function downloadDataAsFile(uri: string, fileRef: any) {
+    axios.get(uri)
+
+        .catch((err: any) => console.log(err))
+}

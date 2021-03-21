@@ -16,7 +16,9 @@
           <select id="catName" v-model="catName">
             <option v-for="category in categories" value="category.name">{{category.category}}</option>
           </select>
-
+          <label for="versName">Version name</label>
+          <input name="versName" id="versName" v-model="versName">
+          <input type="file" @change="onFileSelected">
         </form>
       </div>
     </li>
@@ -41,6 +43,8 @@ export default {
     const boolAdd = ref(false)
     const catName = ref('')
     const download = ref(null)
+    const versName = ref('')
+    const selectedFile = ref(null)
 
     function fetchVersions() {
       fetchData(uri, versions)
@@ -60,6 +64,8 @@ export default {
 
     function saveVersion() {
       const formData = new FormData()
+      //formData.append('obj');
+      //formData.append('file')
       postData(uri, formData)
     }
 
@@ -67,6 +73,20 @@ export default {
       // http://localhost:8080/api/v1/files/versions/download?category=test&name=test&version=1
       const queryParams = '/download?category=test&name=test&version=1'
       fetchData(`${uri}${queryParams}`, download)
+    }
+
+    function activateVersion() {
+      const fd = {
+        category: "string",
+        name: "string",
+        version: 1
+      }
+      putData(`${uri}/active`, fd)
+    }
+
+    function onFileSelected(event: any) {
+      //console.log(event)
+      selectedFile.value = event.target.files[0]
     }
 
     function logDownload() {
@@ -87,6 +107,7 @@ export default {
       boolAdd,
       //fetchCategories,
       catName,
+      versName,
       categories,
       logDownload
     }
