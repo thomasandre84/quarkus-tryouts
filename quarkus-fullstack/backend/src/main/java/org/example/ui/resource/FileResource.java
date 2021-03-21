@@ -1,12 +1,11 @@
 package org.example.ui.resource;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import org.example.ui.dto.FileCategoryInput;
 import org.example.ui.model.FileCategory;
 import org.example.ui.model.FileVersion;
-import org.example.ui.model.FileVersionActive;
+import org.example.ui.dto.FileVersionActive;
 import org.example.ui.service.FileService;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
@@ -16,6 +15,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+
+import java.io.IOException;
 
 import static org.example.ui.resource.FileResource.BASE_URL;
 
@@ -37,7 +38,7 @@ public class FileResource {
     @POST
     @Path("/versions")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Uni<Response> saveVersion(@MultipartForm MultipartFormDataInput input) throws JsonProcessingException {
+    public Uni<Response> saveVersion(@MultipartForm MultipartFormDataInput input) throws IOException, IllegalAccessException, NoSuchFieldException {
         return fileService.persistVersion(input)
                 .onItem().transform(v -> Response.ok(v).build());
     }

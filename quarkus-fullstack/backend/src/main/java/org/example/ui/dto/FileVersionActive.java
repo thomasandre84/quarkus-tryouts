@@ -1,4 +1,4 @@
-package org.example.ui.model;
+package org.example.ui.dto;
 
 import lombok.Getter;
 

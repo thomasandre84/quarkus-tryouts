@@ -16,8 +16,15 @@ export function putData(uri: string, formData: any) {
         .catch((err: any) => console.log(err))
 }
 
-export function downloadDataAsFile(uri: string, fileRef: any) {
-    axios.get(uri)
-
+export function downloadDataAsHtmlFile(uri: string, filename: string) {
+    axios.get(uri, { responseType: 'blob' })
+        .then((res: any) => {
+            const blob = new Blob([res.data], { type: 'text/html' })
+            const link = document.createElement('a')
+            link.href = URL.createObjectURL(blob)
+            link.download = filename
+            link.click()
+            URL.revokeObjectURL(link.href)
+        })
         .catch((err: any) => console.log(err))
 }

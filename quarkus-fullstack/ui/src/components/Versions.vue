@@ -6,6 +6,7 @@
       <div>
         {{version}}
       </div>
+      <br>
     </li>
     <br>
     <li v-if="boolAdd">
@@ -14,11 +15,13 @@
         <form @submit.prevent="submitForm">
           <label for="catName">Category Name Dropdown</label>
           <select id="catName" v-model="catName">
-            <option v-for="category in categories" value="category.name">{{category.category}}</option>
+            <option v-for="category in categories" v-bind:value="category.category">{{category.category}}</option>
           </select>
           <label for="versName">Version name</label>
           <input name="versName" id="versName" v-model="versName">
           <input type="file" @change="onFileSelected">
+          <p>Category: {{catName}} and VersionName: {{versName}}</p>
+          <button>Save Version</button>
         </form>
       </div>
     </li>
@@ -31,7 +34,7 @@
 
 <script lang="ts">
 import { ref, onMounted, watch } from 'vue'
-import {fetchData, postData, putData} from '../api/http'
+import {fetchData, postData, putData, downloadDataAsHtmlFile} from '../api/http'
 
 export default {
   setup() {
@@ -44,7 +47,7 @@ export default {
     const catName = ref('')
     const download = ref(null)
     const versName = ref('')
-    const selectedFile = ref(null)
+    let selectedFile: File
 
     function fetchVersions() {
       fetchData(uri, versions)
@@ -63,16 +66,19 @@ export default {
     }
 
     function saveVersion() {
+      const obj = {name: versName.value, category: catName.value}
       const formData = new FormData()
-      //formData.append('obj');
-      //formData.append('file')
+      formData.append('obj', JSON.stringify(obj));
+      formData.append('file', selectedFile, selectedFile.name)
+      console.log(formData)
       postData(uri, formData)
     }
 
     function downloadVersion() {
       // http://localhost:8080/api/v1/files/versions/download?category=test&name=test&version=1
       const queryParams = '/download?category=test&name=test&version=1'
-      fetchData(`${uri}${queryParams}`, download)
+      //fetchData(`${uri}${queryParams}`, download)
+      downloadDataAsHtmlFile(`${uri}${queryParams}`, 'version')
     }
 
     function activateVersion() {
@@ -85,9 +91,16 @@ export default {
     }
 
     function onFileSelected(event: any) {
-      //console.log(event)
-      selectedFile.value = event.target.files[0]
+      console.log(event)
+      selectedFile = event.target.files[0]
     }
+
+    function submitForm(event: any) {
+      console.log('Form submited ' + event);
+      console.log('Data: ' + versName.value + " " + catName.value)
+      saveVersion()
+    }
+
 
     function logDownload() {
       console.log(download.value)
@@ -109,7 +122,9 @@ export default {
       catName,
       versName,
       categories,
-      logDownload
+      logDownload,
+      submitForm,
+      onFileSelected
     }
   }
 }

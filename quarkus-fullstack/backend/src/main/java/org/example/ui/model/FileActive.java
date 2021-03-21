@@ -17,11 +17,9 @@ public class FileActive extends PanacheEntityBase {
 
     @Id
     @ManyToOne
-    @JoinColumns({
-            @JoinColumn(name = "version", referencedColumnName = "version"),
-            @JoinColumn(name = "template_name", referencedColumnName = "name"),
-            @JoinColumn(name = "template_category", referencedColumnName = "category")
-    })
+    @JoinColumn(name = "version", referencedColumnName = "version")
+    @JoinColumn(name = "template_name", referencedColumnName = "name")
+    @JoinColumn(name = "template_category", referencedColumnName = "category")
     private FileVersion version;
 
     @Id
