@@ -24,10 +24,11 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { defineComponent, ref, onMounted, watch } from 'vue'
 import {fetchData, postData} from '../api/http'
 
-export default {
+export default defineComponent({
+  name: 'Categories',
   setup() {
     const uri = '/v1/files/categories'
     const addCat = ref(false)
@@ -65,7 +66,7 @@ export default {
     }
   }
 
-}
+})
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

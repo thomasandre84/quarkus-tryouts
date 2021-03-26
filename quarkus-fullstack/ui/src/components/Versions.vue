@@ -9,11 +9,6 @@
     </thead>
     <tbody>
     <tr v-for="version in versions">
-      <!--<div class="blockquote blockList">
-        <span>{{version.category.category}} | {{version.name}} | {{version.created}} | {{version.activated}}</span>
-        <button @click="downloadVersion(version.version, version.name, version.category.category)">Download Version</button>
-
-      </div>-->
       <td>{{version.category.category}}</td><td>{{version.name}}</td><td>{{new Date(version.created * 1000)}}</td>
       <td>{{new Date(version.activated * 1000)}}</td>
       <td>
@@ -45,14 +40,14 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { defineComponent, ref, onMounted, watch } from 'vue'
 import {fetchData, postData, putData, downloadDataAsHtmlFile} from '../api/http'
 
-export default {
+export default defineComponent({
+  name: 'Versions',
   setup() {
     const versions = ref([])
     const categories = ref([])
-    //const axios = require('axios')
     const uri = '/v1/files/versions'
     const uriCategories = '/v1/files/categories'
     const boolAdd = ref(false)
@@ -89,7 +84,6 @@ export default {
     function downloadVersion(version: bigint, name: string, category: string) {
       // http://localhost:8080/api/v1/files/versions/download?category=test&name=test&version=1
       const queryParams = `/download?category=${category}&name=${name}&version=${version}`
-      //fetchData(`${uri}${queryParams}`, download)
       downloadDataAsHtmlFile(`${uri}${queryParams}`, `${name}_${version}`)
     }
 
@@ -114,11 +108,6 @@ export default {
       saveVersion()
     }
 
-
-    function logDownload() {
-      console.log(download.value)
-    }
-
     onMounted(() => {
       console.log('Mounting Categories')
       fetchVersions()
@@ -135,13 +124,12 @@ export default {
       catName,
       versName,
       categories,
-      logDownload,
       submitForm,
       onFileSelected,
       activateVersion
     }
   }
-}
+})
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
