@@ -1,4 +1,4 @@
-package org.acme.commandmode;
+package org.acme.kafka;
 
 import io.smallrye.mutiny.TimeoutException;
 import io.smallrye.mutiny.Uni;

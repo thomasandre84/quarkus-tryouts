@@ -1,4 +1,4 @@
-package org.acme.commandmode;
+package org.acme.kafka;
 
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.slf4j.Logger;

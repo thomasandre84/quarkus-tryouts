@@ -1,8 +1,7 @@
-package org.acme.commandmode;
+package org.acme.kafka;
 
 import io.smallrye.reactive.messaging.kafka.KafkaConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.OffsetAndTimestamp;
 import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

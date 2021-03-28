@@ -1,4 +1,4 @@
-package org.acme.commandmode;
+package org.acme.kafka;
 
 import javax.enterprise.context.ApplicationScoped;
 
