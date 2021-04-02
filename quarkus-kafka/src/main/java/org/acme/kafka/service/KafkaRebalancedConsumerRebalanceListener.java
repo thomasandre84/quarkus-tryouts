@@ -1,4 +1,4 @@
-package org.acme.kafka;
+package org.acme.kafka.service;
 
 import io.smallrye.reactive.messaging.kafka.KafkaConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -12,7 +12,7 @@ import java.util.*;
 
 
 @ApplicationScoped
-@Named("rebalanced-example.rebalancer")
+@Named("response-incoming")
 public class KafkaRebalancedConsumerRebalanceListener implements KafkaConsumerRebalanceListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaRebalancedConsumerRebalanceListener.class);
@@ -28,21 +28,11 @@ public class KafkaRebalancedConsumerRebalanceListener implements KafkaConsumerRe
     @Override
     public void onPartitionsAssigned(Consumer<?, ?> consumer,
                                      Collection<org.apache.kafka.common.TopicPartition> partitions) {
-        //long now = System.currentTimeMillis();
-        //long shouldStartAt = now - 600_000L; //10 minute ago
         topicPartitions.clear();
-        //Map<org.apache.kafka.common.TopicPartition, Long> request = new HashMap<>();
         for (org.apache.kafka.common.TopicPartition partition : partitions) {
             LOGGER.info("Assigned Partition: {}",  partition);
             topicPartitions.add(partition);
         }
-        /*Map<org.apache.kafka.common.TopicPartition, OffsetAndTimestamp> offsets = consumer
-                .offsetsForTimes(request);
-        for (Map.Entry<org.apache.kafka.common.TopicPartition, OffsetAndTimestamp> position : offsets.entrySet()) {
-            long target = position.getValue() == null ? 0L : position.getValue().offset();
-            LOGGER.info("Seeking position {} for {}", target, position.getKey());
-            consumer.seek(position.getKey(), target);
-        }*/
     }
 
     public List<TopicPartition> getTopicPartitions() {

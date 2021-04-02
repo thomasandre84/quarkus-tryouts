@@ -1,4 +1,4 @@
-package org.acme.kafka;
+package org.acme.kafka.controller;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -9,6 +9,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import io.smallrye.mutiny.Uni;
+import org.acme.kafka.service.KafkaProd;
+import org.acme.kafka.service.ProdConsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

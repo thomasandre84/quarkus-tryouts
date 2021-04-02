@@ -1,4 +1,4 @@
-package org.acme.kafka;
+package org.acme.kafka.service;
 
 import io.smallrye.mutiny.TimeoutException;
 import io.smallrye.mutiny.Uni;
@@ -67,11 +67,6 @@ public class ProdConsService {
 
         emitter.send(message);
         return id;
-        /*        () -> {
-                    // Called when the message is acknowledged.
-                    return CompletableFuture.completedFuture(null);
-                }));
-        return Uni.createFrom().item(test);*/
     }
 
     @Incoming("request-in")

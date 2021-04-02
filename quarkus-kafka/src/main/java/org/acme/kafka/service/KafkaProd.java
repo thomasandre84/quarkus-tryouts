@@ -1,4 +1,4 @@
-package org.acme.kafka;
+package org.acme.kafka.service;
 
 import javax.enterprise.context.ApplicationScoped;
 
