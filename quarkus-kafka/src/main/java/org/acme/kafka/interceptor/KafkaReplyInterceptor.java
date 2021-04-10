@@ -15,6 +15,11 @@ public class KafkaReplyInterceptor {
     public Object manageReply(InvocationContext ctx) throws Exception {
         log.info("in Interceptor");
 
+        Object[] params = ctx.getParameters();
+        for (Object param : params) {
+            log.info("Parameter: {}", param);
+        }
+        ctx.getContextData().forEach((k,v) -> log.info("Context Data: {} {}", k, v));
         Object obj = ctx.proceed();
         return obj;
     }
