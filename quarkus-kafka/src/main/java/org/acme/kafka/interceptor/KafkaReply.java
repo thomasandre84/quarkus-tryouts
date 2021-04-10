@@ -7,6 +7,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface KafkaReply {
-    String outgoing() default "test";
+    String outgoing() default "response";
     String incoming() default "reply";
 }

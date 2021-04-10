@@ -14,6 +14,7 @@ public class KafkaReplyInterceptor {
     @AroundInvoke
     public Object manageReply(InvocationContext ctx) throws Exception {
         log.info("in Interceptor");
+
         Object obj = ctx.proceed();
         return obj;
     }

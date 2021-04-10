@@ -1,10 +1,9 @@
 package org.acme.kafka.service;
 
 import io.smallrye.reactive.messaging.kafka.KafkaConsumerRebalanceListener;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.common.TopicPartition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
@@ -13,9 +12,8 @@ import java.util.*;
 
 @ApplicationScoped
 @Named("response-incoming")
+@Slf4j
 public class KafkaRebalancedConsumerRebalanceListener implements KafkaConsumerRebalanceListener {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaRebalancedConsumerRebalanceListener.class);
 
     private List<TopicPartition> topicPartitions = new ArrayList<>();
     /**
@@ -29,8 +27,8 @@ public class KafkaRebalancedConsumerRebalanceListener implements KafkaConsumerRe
     public void onPartitionsAssigned(Consumer<?, ?> consumer,
                                      Collection<org.apache.kafka.common.TopicPartition> partitions) {
         topicPartitions.clear();
-        for (org.apache.kafka.common.TopicPartition partition : partitions) {
-            LOGGER.info("Assigned Partition: {}",  partition);
+        for (TopicPartition partition : partitions) {
+            log.info("Assigned Partition: {}",  partition);
             topicPartitions.add(partition);
         }
     }

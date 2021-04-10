@@ -7,9 +7,7 @@ import io.smallrye.mutiny.operators.multi.processors.BroadcastProcessor;
 
 import io.smallrye.reactive.messaging.kafka.IncomingKafkaRecordMetadata;
 import io.smallrye.reactive.messaging.kafka.OutgoingKafkaRecordMetadata;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.header.Header;
-import org.apache.kafka.common.header.Headers;
+import org.acme.kafka.util.KafkaHeaderUtil;
 import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.reactive.messaging.*;
@@ -22,8 +20,6 @@ import java.math.BigInteger;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
 import java.util.concurrent.CompletionStage;
 
 
@@ -46,13 +42,9 @@ public class ProdConsService {
     public String sendMessage(String test) {
         log.info("Outgoing: {}", test);
         log.info("Listening to the following Partitions: {}", kafkaRebalancedConsumerRebalanceListener.getTopicPartitions());
-        int partitionSize = kafkaRebalancedConsumerRebalanceListener.getTopicPartitions().size();
-        int partitionIndex = new Random().nextInt(partitionSize);
-        TopicPartition target = kafkaRebalancedConsumerRebalanceListener.getTopicPartitions().get(partitionIndex); // for tests choose a fix partition
-        BigInteger targetPartition = BigInteger.valueOf(target.partition());
-        log.info("Identified TargetPartition: {}", targetPartition);
-        String id = UUID.randomUUID().toString();
-        log.info("Generated UUID: {}", id);
+
+        BigInteger targetPartition = KafkaHeaderUtil.getReplyTargetPartition(kafkaRebalancedConsumerRebalanceListener.getTopicPartitions());
+        String id = KafkaHeaderUtil.getGeneratedId();
         OutgoingKafkaRecordMetadata<String> metadataCustom = OutgoingKafkaRecordMetadata.<String>builder()
                 .withKey(CUSTOM)
                 .withHeaders(new RecordHeaders()
@@ -60,8 +52,7 @@ public class ProdConsService {
                         .add(ID, id.getBytes())
                 )
                 .build();
-
-
+        
         Metadata metadata = Metadata.of(metadataCustom);
         Message<String> message = Message.of(test, metadata);
 
@@ -74,11 +65,8 @@ public class ProdConsService {
     @Traced
     public Uni<Message<String>> doResponse(Message<String> message) {
         String out = message.getPayload() + LocalDateTime.now().toString();
-        //message.getMetadata().forEach(m -> log.info("Metadata in Message: {}", m));
-        //Optional<IncomingKafkaRecordMetadata> metadata = message.getMetadata(IncomingKafkaRecordMetadata.class);
-        //metadata.get().getHeaders().forEach(header -> log.info("header: key: {}, Value: {}", header.key(), new BigInteger(header.value())));
-        Optional<Integer> targetPartition = getTargetPartition(message.getMetadata(IncomingKafkaRecordMetadata.class));
-        Optional<String> id = getId(message.getMetadata(IncomingKafkaRecordMetadata.class));
+        Optional<Integer> targetPartition = KafkaHeaderUtil.getTargetPartition(message.getMetadata(IncomingKafkaRecordMetadata.class).get());
+        Optional<String> id = KafkaHeaderUtil.getHeaderId(message.getMetadata(IncomingKafkaRecordMetadata.class).get());
         // Also extract UUID and add it again to metadata
         OutgoingKafkaRecordMetadata<String> metadataCustom = OutgoingKafkaRecordMetadata.<String>builder()
                 .withKey(CUSTOM)
@@ -96,55 +84,24 @@ public class ProdConsService {
         return Uni.createFrom().item(m2);
     }
 
-    private Optional<Integer> getTargetPartition(Optional<IncomingKafkaRecordMetadata> metadata) {
 
-        if (metadata.isPresent()) {
-            Headers headers = metadata.get().getHeaders();
-            for (Header header : headers)
-                if (PARTITION.equals(header.key())) {
-                    BigInteger bi = new BigInteger(header.value());
-                    Integer targetPartition = bi.intValue();
-                    log.info("Target Partition: {}", targetPartition);
-                    return Optional.of(targetPartition);
-                }
-        }
-        return Optional.empty();
-    }
-
-    private Optional<String> getId(Optional<IncomingKafkaRecordMetadata> metadata) {
-
-        if (metadata.isPresent()) {
-            Headers headers = metadata.get().getHeaders();
-            for (Header header : headers)
-                if (ID.equals(header.key())) {
-                    String id = new String(header.value());
-                    log.info("Got UUID of: {}", id);
-                    return Optional.of(id);
-                }
-        }
-        return Optional.empty();
-    }
 
     @Incoming("response-in")
     @Traced
     public CompletionStage<Void> respond(Message<String> message) {
         log.info("Incoming Response Payload: {}", message.getPayload());
-        log.info("Incoming Response ID: {}", getId(message.getMetadata(IncomingKafkaRecordMetadata.class)).get());
+        log.info("Incoming Response ID: {}", KafkaHeaderUtil.getHeaderId(message.getMetadata(IncomingKafkaRecordMetadata.class).get()).get());
         processor.onNext(message);
         return message.ack();
     }
-
-    private boolean equalId(String initId, Optional<String> receivedId) {
-        String recId = receivedId.get();
-        log.info("Init Id {}  with received Id: {}", initId, recId);
-        return initId.equals(recId);
-    }
+    
 
     public Uni<String> process(String message) {
         String id = sendMessage(message);
 
-        return Uni.createFrom().multi(processor.filter(m -> equalId(id, getId(m.getMetadata(IncomingKafkaRecordMetadata.class))))) // to check, if this filter really works
-                //.onItem().invoke(() -> sendMessage(message))
+        return Uni.createFrom().multi(processor.filter(m ->
+                    KafkaHeaderUtil.equalId(id, KafkaHeaderUtil.getHeaderId(m.getMetadata(IncomingKafkaRecordMetadata.class).get())))
+                ) // to check, if this filter really works
                 .onItem().transform(Message::getPayload)
                 .onItem().invoke(t -> log.info("Received in Reactive Stream: {}", t))
                 .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
