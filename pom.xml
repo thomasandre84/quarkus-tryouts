@@ -47,6 +47,7 @@
     <module>quarkus-kafka</module>
     <module>quarkus-store-file</module>
     <module>quarkus-fullstack</module>
+    <module>quarkus-quartz</module>
   </modules>
 
   <dependencies>
