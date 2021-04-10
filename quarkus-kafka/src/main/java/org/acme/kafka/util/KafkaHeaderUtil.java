@@ -74,24 +74,22 @@ public class KafkaHeaderUtil {
     }
 
     public static OutgoingKafkaRecordMetadata<String> genRequestOutgoingKafkaRecordMetadata(BigInteger targetPartition, String id){
-        OutgoingKafkaRecordMetadata<String> metadataCustom = OutgoingKafkaRecordMetadata.<String>builder()
+        return OutgoingKafkaRecordMetadata.<String>builder()
                 .withKey(CUSTOM)
                 .withHeaders(new RecordHeaders()
                         .add(PARTITION, targetPartition.toByteArray())
                         .add(ID, id.getBytes())
                 )
                 .build();
-        return metadataCustom;
     }
 
     public static OutgoingKafkaRecordMetadata<String> genResponseOutgoingKafkaRecordMetadata(Integer targetPartition, String id){
-        OutgoingKafkaRecordMetadata<String> metadataCustom = OutgoingKafkaRecordMetadata.<String>builder()
+        return OutgoingKafkaRecordMetadata.<String>builder()
                 .withKey(CUSTOM)
                 .withHeaders(new RecordHeaders()
                         .add(ID, id.getBytes())
                 )
                 .withPartition(targetPartition)
                 .build();
-        return metadataCustom;
     }
 }

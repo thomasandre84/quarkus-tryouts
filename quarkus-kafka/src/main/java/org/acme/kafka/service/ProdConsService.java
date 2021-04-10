@@ -8,7 +8,6 @@ import io.smallrye.mutiny.operators.multi.processors.BroadcastProcessor;
 import io.smallrye.reactive.messaging.kafka.IncomingKafkaRecordMetadata;
 import io.smallrye.reactive.messaging.kafka.OutgoingKafkaRecordMetadata;
 import org.acme.kafka.util.KafkaHeaderUtil;
-import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.reactive.messaging.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +54,7 @@ public class ProdConsService {
     }
 
     @Incoming("request-in")
-    @Traced
+    //@Traced
     public CompletionStage<Void> getRequest(Message<String> message) {
         String out = message.getPayload() + LocalDateTime.now().toString();
         Optional<Integer> targetPartition = KafkaHeaderUtil.getTargetPartition(message.getMetadata(IncomingKafkaRecordMetadata.class).get());
@@ -77,11 +76,12 @@ public class ProdConsService {
 
 
     @Incoming("response-in")
-    @Traced
+    //@Traced
     public CompletionStage<Void> respond(Message<String> message) {
         log.info("Incoming Response Payload: {}", message.getPayload());
         log.info("Incoming Response ID: {}", KafkaHeaderUtil.getHeaderId(message.getMetadata(IncomingKafkaRecordMetadata.class).get()).get());
         responseProcessor.onNext(message);
+
         return message.ack();
     }
 
