@@ -67,6 +67,7 @@ public class KafkaHeaderUtil {
         return targetPartition;
     }
 
+    // Better would be, if we could use the tracing ID
     public static String getGeneratedId() {
         String id = UUID.randomUUID().toString();
         log.info("Generated UUID: {}", id);
