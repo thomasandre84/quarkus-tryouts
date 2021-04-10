@@ -1,9 +1,11 @@
 package org.acme.kafka.util;
 
 import io.smallrye.reactive.messaging.kafka.IncomingKafkaRecordMetadata;
+import io.smallrye.reactive.messaging.kafka.OutgoingKafkaRecordMetadata;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.header.Headers;
+import org.apache.kafka.common.header.internals.RecordHeaders;
 
 import java.util.List;
 
@@ -17,6 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class KafkaHeaderUtil {
     static final String PARTITION = "partition";
     static final String ID = "id";
+    static final String CUSTOM = "custom";
 
     private KafkaHeaderUtil() {
     }
@@ -68,5 +71,27 @@ public class KafkaHeaderUtil {
         String id = UUID.randomUUID().toString();
         log.info("Generated UUID: {}", id);
         return id;
+    }
+
+    public static OutgoingKafkaRecordMetadata<String> genRequestOutgoingKafkaRecordMetadata(BigInteger targetPartition, String id){
+        OutgoingKafkaRecordMetadata<String> metadataCustom = OutgoingKafkaRecordMetadata.<String>builder()
+                .withKey(CUSTOM)
+                .withHeaders(new RecordHeaders()
+                        .add(PARTITION, targetPartition.toByteArray())
+                        .add(ID, id.getBytes())
+                )
+                .build();
+        return metadataCustom;
+    }
+
+    public static OutgoingKafkaRecordMetadata<String> genResponseOutgoingKafkaRecordMetadata(Integer targetPartition, String id){
+        OutgoingKafkaRecordMetadata<String> metadataCustom = OutgoingKafkaRecordMetadata.<String>builder()
+                .withKey(CUSTOM)
+                .withHeaders(new RecordHeaders()
+                        .add(ID, id.getBytes())
+                )
+                .withPartition(targetPartition)
+                .build();
+        return metadataCustom;
     }
 }
