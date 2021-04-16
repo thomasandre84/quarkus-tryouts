@@ -1,5 +1,8 @@
 package org.acme.kafka.service;
 
+import io.jaegertracing.internal.JaegerSpanContext;
+import io.opentracing.SpanContext;
+import io.opentracing.Tracer;
 import io.smallrye.mutiny.TimeoutException;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.infrastructure.Infrastructure;
@@ -10,6 +13,7 @@ import io.smallrye.reactive.messaging.kafka.OutgoingKafkaRecordMetadata;
 import lombok.extern.slf4j.Slf4j;
 import org.acme.kafka.util.KafkaHeaderUtil;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.reactive.messaging.*;
 
 
@@ -37,23 +41,30 @@ public class RequestService {
     @Channel("request")
     Emitter<String> emitter;
 
+    @Inject
+    Tracer tracer;
+
     public String sendMessage(String test) {
+        //log.info("Tracer {}", tracer.activeSpan());
+        final SpanContext spanContext = tracer.scopeManager().active().span().context();
+        String traceId = ((JaegerSpanContext) spanContext).getTraceId();
+        log.info("The TraceId is: {}", traceId);
         log.info("Outgoing: {}", test);
         log.info("Listening to the following Partitions: {}", kafkaRebalancedConsumerRebalanceListener.getTopicPartitions());
 
         BigInteger targetPartition = KafkaHeaderUtil.getReplyTargetPartition(kafkaRebalancedConsumerRebalanceListener.getTopicPartitions());
-        String id = KafkaHeaderUtil.getGeneratedId();
-        OutgoingKafkaRecordMetadata<String> metadataCustom = KafkaHeaderUtil.genRequestOutgoingKafkaRecordMetadata(targetPartition, id);
+        //String id = KafkaHeaderUtil.getGeneratedId();
+        OutgoingKafkaRecordMetadata<String> metadataCustom = KafkaHeaderUtil.genRequestOutgoingKafkaRecordMetadata(targetPartition, traceId);
         
         Metadata metadata = Metadata.of(metadataCustom);
         Message<String> message = Message.of(test, metadata);
 
         emitter.send(message);
-        return id;
+        return traceId;
     }
 
     @Incoming("response-in")
-    //@Traced
+    @Traced
     public CompletionStage<Void> respond(Message<String> message) {
         log.info("Incoming Response Payload: {}", message.getPayload());
         log.info("Incoming Response ID: {}", KafkaHeaderUtil.getHeaderId(message.getMetadata(IncomingKafkaRecordMetadata.class).get()).get());
@@ -80,7 +91,6 @@ public class RequestService {
 
     public String process2(String message) {
         String id = sendMessage(message);
-
         return getResponse(id).await().atMost(Duration.ofMillis(replyTimeout));
     }
 
