@@ -91,7 +91,8 @@ public class RequestService {
 
     public String process2(String message) {
         String id = sendMessage(message);
-        return getResponse(id).await().atMost(Duration.ofMillis(replyTimeout));
+        return getResponse(id)
+                .await().atMost(Duration.ofMillis(replyTimeout));
     }
 
     private Uni<String> getResponse(String id) {
