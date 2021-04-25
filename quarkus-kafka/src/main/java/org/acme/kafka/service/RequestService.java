@@ -1,7 +1,6 @@
 package org.acme.kafka.service;
 
 import io.jaegertracing.internal.JaegerSpanContext;
-import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
 import io.smallrye.mutiny.TimeoutException;
 import io.smallrye.mutiny.Uni;
@@ -35,7 +34,7 @@ public class RequestService {
     private BroadcastProcessor<Message<String>> responseProcessor = BroadcastProcessor.create();
 
     @Inject
-    KafkaRebalancedConsumerRebalanceListener kafkaRebalancedConsumerRebalanceListener;
+    KafkaRebalanceListener kafkaRebalanceListener;
 
     @Inject
     @Channel("request")
@@ -45,15 +44,8 @@ public class RequestService {
     Tracer tracer;
 
     public String sendMessage(String test) {
-        //log.info("Tracer {}", tracer.activeSpan());
-        final SpanContext spanContext = tracer.scopeManager().active().span().context();
-        String traceId = ((JaegerSpanContext) spanContext).getTraceId();
-        log.info("The TraceId is: {}", traceId);
-        log.info("Outgoing: {}", test);
-        log.info("Listening to the following Partitions: {}", kafkaRebalancedConsumerRebalanceListener.getTopicPartitions());
-
-        BigInteger targetPartition = KafkaHeaderUtil.getReplyTargetPartition(kafkaRebalancedConsumerRebalanceListener.getTopicPartitions());
-        //String id = KafkaHeaderUtil.getGeneratedId();
+        String traceId  = KafkaHeaderUtil.getUberTraceId((JaegerSpanContext) tracer.activeSpan().context());
+        BigInteger targetPartition = KafkaHeaderUtil.getReplyTargetPartition(kafkaRebalanceListener.getTopicPartitions());
         OutgoingKafkaRecordMetadata<String> metadataCustom = KafkaHeaderUtil.genRequestOutgoingKafkaRecordMetadata(targetPartition, traceId);
         
         Metadata metadata = Metadata.of(metadataCustom);

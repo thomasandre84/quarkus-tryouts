@@ -1,25 +1,22 @@
 package org.acme.kafka.util;
 
+import io.jaegertracing.internal.JaegerSpanContext;
 import io.smallrye.reactive.messaging.kafka.IncomingKafkaRecordMetadata;
 import io.smallrye.reactive.messaging.kafka.OutgoingKafkaRecordMetadata;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.header.Headers;
-import org.apache.kafka.common.header.internals.RecordHeaders;
+import org.apache.kafka.common.header.internals.RecordHeader;
 
-import java.util.List;
+import java.util.*;
 
 import java.math.BigInteger;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 public class KafkaHeaderUtil {
     static final String PARTITION = "partition";
-    static final String ID = "id";
-    static final String CUSTOM = "custom";
+    static final String ID = "uber-trace-id";
 
     private KafkaHeaderUtil() {
     }
@@ -67,30 +64,27 @@ public class KafkaHeaderUtil {
         return targetPartition;
     }
 
-    // Better would be, if we could use the tracing ID
-    public static String getGeneratedId() {
-        String id = UUID.randomUUID().toString();
-        log.info("Generated UUID: {}", id);
-        return id;
-    }
-
     public static OutgoingKafkaRecordMetadata<String> genRequestOutgoingKafkaRecordMetadata(BigInteger targetPartition, String id){
+        RecordHeader headerId = new RecordHeader(ID, id.getBytes());
+        RecordHeader headerPartition = new RecordHeader(PARTITION, targetPartition.toByteArray());
+
         return OutgoingKafkaRecordMetadata.<String>builder()
-                .withKey(CUSTOM)
-                .withHeaders(new RecordHeaders()
-                        .add(PARTITION, targetPartition.toByteArray())
-                        .add(ID, id.getBytes())
-                )
+                .withHeaders(Arrays.asList(headerId, headerPartition))
                 .build();
     }
 
     public static OutgoingKafkaRecordMetadata<String> genResponseOutgoingKafkaRecordMetadata(Integer targetPartition, String id){
+        RecordHeader headerId = new RecordHeader(ID, id.getBytes());
         return OutgoingKafkaRecordMetadata.<String>builder()
-                .withKey(CUSTOM)
-                .withHeaders(new RecordHeaders()
-                        .add(ID, id.getBytes())
-                )
+                .withHeaders(Collections.singletonList(headerId))
                 .withPartition(targetPartition)
                 .build();
+    }
+
+    public static String getUberTraceId(JaegerSpanContext spanCtx) {
+        return spanCtx.getTraceId() + ":" +
+                Long.toHexString(spanCtx.getSpanId()) + ":" +
+                Long.toHexString(spanCtx.getParentId()) + ":" +
+                Integer.toHexString(spanCtx.getFlags());
     }
 }

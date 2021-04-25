@@ -13,7 +13,7 @@ import java.util.*;
 @ApplicationScoped
 @Named("response-incoming")
 @Slf4j
-public class KafkaRebalancedConsumerRebalanceListener implements KafkaConsumerRebalanceListener {
+public class KafkaRebalanceListener implements KafkaConsumerRebalanceListener {
 
     private List<TopicPartition> topicPartitions = new ArrayList<>();
     /**
