@@ -1,8 +1,5 @@
 package org.acme.kafka.service;
 
-import io.jaegertracing.internal.JaegerSpanContext;
-import io.opentracing.SpanContext;
-import io.opentracing.Tracer;
 import io.smallrye.reactive.messaging.kafka.IncomingKafkaRecordMetadata;
 import io.smallrye.reactive.messaging.kafka.OutgoingKafkaRecordMetadata;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +12,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.CompletionStage;
 
 @Slf4j
@@ -29,8 +27,13 @@ public class ReplyService {
     @ConsumerTraceBinding
     public CompletionStage<Void> getRequest(Message<String> message) {
         String out = message.getPayload() + " " + LocalDateTime.now(); // The operation
-        sendOptionalResponse(out, message);
-        return message.ack();
+        if (new Random().nextBoolean()) {
+            sendOptionalResponse(out, message);
+            return message.ack();
+        }
+        else {
+            return message.nack(new Throwable("Test"));
+        }
     }
 
     private void sendOptionalResponse(String out, Message<String> message){
