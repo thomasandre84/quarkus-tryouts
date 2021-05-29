@@ -1,4 +1,4 @@
-package org.acme.resteasyjackson.model;
+package org.acme.filerest.model;
 
 public class Base64Input {
     public String fileName;

@@ -1,8 +1,8 @@
-package org.acme.resteasyjackson.resource;
+package org.acme.filerest.resource;
 
-import org.acme.resteasyjackson.model.Base64Input;
-import org.acme.resteasyjackson.model.FileContent;
-import org.acme.resteasyjackson.service.FileContentService;
+import org.acme.filerest.model.Base64Input;
+import org.acme.filerest.model.FileContent;
+import org.acme.filerest.service.FileContentService;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;

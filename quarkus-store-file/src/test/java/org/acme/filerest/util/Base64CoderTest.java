@@ -1,4 +1,4 @@
-package org.acme.resteasyjackson.util;
+package org.acme.filerest.util;
 
 import org.junit.jupiter.api.Test;
 

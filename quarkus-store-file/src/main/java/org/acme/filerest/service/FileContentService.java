@@ -1,8 +1,8 @@
-package org.acme.resteasyjackson.service;
+package org.acme.filerest.service;
 
-import org.acme.resteasyjackson.model.Base64Input;
-import org.acme.resteasyjackson.model.FileContent;
-import org.acme.resteasyjackson.util.Base64Coder;
+import org.acme.filerest.model.Base64Input;
+import org.acme.filerest.model.FileContent;
+import org.acme.filerest.util.Base64Coder;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

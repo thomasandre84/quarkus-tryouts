@@ -1,4 +1,4 @@
-package org.acme.resteasyjackson.util;
+package org.acme.filerest.util;
 
 
 import java.util.Base64;
