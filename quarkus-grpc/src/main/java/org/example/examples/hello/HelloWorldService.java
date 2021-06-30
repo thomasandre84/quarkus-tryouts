@@ -1,13 +1,10 @@
 package org.example.examples.hello;
 
-import examples.HelloReply;
-import examples.HelloRequest;
-import examples.MutinyGreeterGrpc;
 import io.smallrye.mutiny.Uni;
 
 import javax.inject.Singleton;
 import java.util.concurrent.atomic.AtomicInteger;
-
+/*
 @Singleton
 public class HelloWorldService extends MutinyGreeterGrpc.GreeterImplBase {
 
@@ -21,3 +18,4 @@ public class HelloWorldService extends MutinyGreeterGrpc.GreeterImplBase {
                 .map(res -> HelloReply.newBuilder().setMessage(res).setCount(count).build());
     }
 }
+*/

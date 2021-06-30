@@ -1,10 +1,7 @@
 package org.example.examples.hello;
 
-import examples.GreeterGrpc;
-import examples.HelloReply;
-import examples.HelloRequest;
-import examples.MutinyGreeterGrpc;
-import io.quarkus.grpc.runtime.annotations.GrpcService;
+/*
+import io.quarkus.grpc.GrpcService;
 import io.smallrye.mutiny.Uni;
 
 import javax.inject.Inject;
@@ -40,4 +37,4 @@ public class HelloWorldEndpoint {
     public String generateResponse(HelloReply reply) {
         return String.format("%s! HelloWorldService has been called %d number of times.", reply.getMessage(), reply.getCount());
     }
-}
+}*/

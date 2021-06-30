@@ -9,7 +9,7 @@ import javax.ws.rs.Path;
 //@Produces(MediaType.APPLICATION_JSON)
 @Path(AuthResource.BASE_URL)
 public class AuthResource {
-    static final String BASE_URL = "/";
+    static final String BASE_URL = "/hello";
 
     @Inject
     SecurityIdentity identity;
