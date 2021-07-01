@@ -1,11 +1,12 @@
 package org.example.examples.hello;
 
+import examples.*;
+import io.quarkus.grpc.GrpcService;
 import io.smallrye.mutiny.Uni;
 
-import javax.inject.Singleton;
 import java.util.concurrent.atomic.AtomicInteger;
-/*
-@Singleton
+
+@GrpcService
 public class HelloWorldService extends MutinyGreeterGrpc.GreeterImplBase {
 
     AtomicInteger counter = new AtomicInteger();
@@ -18,4 +19,3 @@ public class HelloWorldService extends MutinyGreeterGrpc.GreeterImplBase {
                 .map(res -> HelloReply.newBuilder().setMessage(res).setCount(count).build());
     }
 }
-*/

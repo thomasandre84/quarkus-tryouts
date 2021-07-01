@@ -10,23 +10,23 @@
   </parent>
 
   <properties>
-    <os-maven-plugin.version>1.6.2</os-maven-plugin.version>
+    <!--<os-maven-plugin.version>1.6.2</os-maven-plugin.version>
     <protobuf-maven-plugin.version>0.6.1</protobuf-maven-plugin.version>
     <protoc.version>3.11.4</protoc.version>
     <grpc.version>1.29.0</grpc.version>
-    <protobuf-java.version>3.12.0</protobuf-java.version>
-    <quarkus.generate-code.grpc.scan-for-imports>all</quarkus.generate-code.grpc.scan-for-imports>
+    <protobuf-java.version>3.12.0</protobuf-java.version>-->
+    <!--<quarkus.generate-code.grpc.scan-for-imports>none</quarkus.generate-code.grpc.scan-for-imports>-->
   </properties>
 
   <artifactId>quarkus-grpc</artifactId>
 
   <dependencies>
-    <!-- some fix for this lib to prevent it taken in Version 3.6.0 -->
+    <!-- some fix for this lib to prevent it taken in Version 3.6.0
     <dependency>
       <groupId>com.google.protobuf</groupId>
       <artifactId>protobuf-java</artifactId>
       <version>${protobuf-java.version}</version>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-resteasy-mutiny</artifactId>
@@ -38,13 +38,13 @@
   </dependencies>
 
   <build>
-    <extensions>
+    <!--<extensions>
       <extension>
         <groupId>kr.motd.maven</groupId>
         <artifactId>os-maven-plugin</artifactId>
         <version>${os-maven-plugin.version}</version>
       </extension>
-    </extensions>
+    </extensions> -->
     <plugins>
           <plugin>
             <groupId>io.quarkus</groupId>
@@ -61,7 +61,7 @@
               </execution>
             </executions>
           </plugin>
-        <plugin>
+        <!--<plugin>
           <groupId>org.xolstice.maven.plugins</groupId>
           <artifactId>protobuf-maven-plugin</artifactId>
           <version>${protobuf-maven-plugin.version}</version>
@@ -95,7 +95,7 @@
               </goals>
             </execution>
           </executions>
-        </plugin>
+        </plugin>-->
     </plugins>
   </build>
 </project>
