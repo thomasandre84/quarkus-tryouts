@@ -15,7 +15,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
-    <quarkus.version>2.0.0.Final</quarkus.version>
+    <quarkus.version>2.0.1.Final</quarkus.version>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
     <grpc.version>1.30.0</grpc.version>
     <protoc.version>3.12.3</protoc.version>
