@@ -32,7 +32,7 @@ If you want to learn more about building native executables, please consult http
 ## Creating the Certificates
 see: https://blog.devolutions.net/2020/07/tutorial-how-to-generate-secure-self-signed-server-and-client-certificates-with-openssl
 * Create CA Cert
-* Create Cleint Cert
+* Create Client Cert
 * Create Server Cert
 * Create PK12 Certs from Server and Client
 ```
@@ -41,7 +41,7 @@ openssl pkcs12 -export -name clientcert -in client1.crt -inkey client1.key -out 
 ```
 * Create Keystore and Trustsore
 ```
-keytool -importkeystore -destkeystore mykeystore.jks -srckeystore myp12keystore.p12 -srcstoretype pkcs12 -alias servercert -storepasswd changeit
+keytool -importkeystore -destkeystore mykeystore.jks -srckeystore myp12keystore.p12 -srcstoretype pkcs12 -alias servercert
 keytool -import -file ca.crt -alias ca -keystore mytruststore.jks -storepass test1234
 ```
 
