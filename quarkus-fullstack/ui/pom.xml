@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>fullstack-ui</artifactId>
+    <packaging>pom</packaging>
 
     <build>
         <resources>

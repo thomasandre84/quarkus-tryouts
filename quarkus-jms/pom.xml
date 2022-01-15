@@ -13,8 +13,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>io.quarkus</groupId>
+      <groupId>io.quarkiverse.artemis</groupId>
       <artifactId>quarkus-artemis-jms</artifactId>
+      <version>1.0.3</version>
     </dependency>
   </dependencies>
 
