@@ -17,6 +17,10 @@
       <artifactId>quarkus-artemis-jms</artifactId>
       <version>1.0.3</version>
     </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-resteasy-jackson</artifactId>
+    </dependency>
   </dependencies>
 
 </project>

@@ -13,5 +13,7 @@
     <description>Some Security tryouts</description>
     <modules>
         <module>quarkus-rest-mtls</module>
+        <module>quarkus-consent-manager</module>
+        <module>quarkus-oauth2</module>
     </modules>
 </project>

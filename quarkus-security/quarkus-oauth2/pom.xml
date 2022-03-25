@@ -7,7 +7,7 @@
     <groupId>com.github.thomasandre84</groupId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
-  <artifactId>quarkus-consent-manager</artifactId>
+  <artifactId>quarkus-oaut2</artifactId>
   <properties>
   </properties>
   <dependencies>
