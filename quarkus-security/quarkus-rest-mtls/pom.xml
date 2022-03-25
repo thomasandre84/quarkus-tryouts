@@ -7,7 +7,7 @@
     <artifactId>quarkus-tryouts-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
-  <artifactId>quarkus-rest-secure</artifactId>
+  <artifactId>quarkus-rest-mtls</artifactId>
   <dependencies>
     <dependency>
       <groupId>io.quarkus</groupId>
