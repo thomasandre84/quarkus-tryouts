@@ -3,8 +3,8 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
+    <artifactId>quarkus-security</artifactId>
     <groupId>com.github.thomasandre84</groupId>
-    <artifactId>quarkus-tryouts-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
   <artifactId>quarkus-rest-mtls</artifactId>
