@@ -1,10 +1,11 @@
-package org.example.examples.hello;
+package com.github.thomasandre84.mtls;
 
 import io.quarkus.security.identity.SecurityIdentity;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+
 
 //@Produces(MediaType.APPLICATION_JSON)
 @Path(AuthResource.BASE_URL)

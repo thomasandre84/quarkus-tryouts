@@ -1,9 +1,9 @@
 package org.acme.kafka.interceptor;
 
 import io.opentracing.SpanContext;
-import io.opentracing.contrib.interceptors.OpenTracingInterceptor;
 import io.opentracing.contrib.kafka.TracingKafkaUtils;
 import io.opentracing.util.GlobalTracer;
+import io.smallrye.opentracing.contrib.interceptor.OpenTracingInterceptor;
 import io.smallrye.reactive.messaging.kafka.IncomingKafkaRecordMetadata;
 import org.apache.kafka.common.header.Headers;
 import org.eclipse.microprofile.reactive.messaging.Message;
