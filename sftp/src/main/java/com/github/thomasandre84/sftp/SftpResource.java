@@ -33,4 +33,10 @@ public class SftpResource {
     public void createLocalPooledConnection(@PathParam("host") String host, @PathParam("amount") int amount) throws Exception {
         poolService.createLocalPooledConnections(host, amount);
     }
+
+    @POST
+    @Path("/local/async/{host}/{amount}")
+    public void createLocalAsyncPooledConnection(@PathParam("host") String host, @PathParam("amount") int amount) throws Exception {
+        poolService.createLocalPooledAsync(host, amount);
+    }
 }

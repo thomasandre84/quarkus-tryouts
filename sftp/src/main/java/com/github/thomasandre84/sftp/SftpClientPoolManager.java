@@ -14,10 +14,10 @@ public class SftpClientPoolManager {
     public MinaSftpClient borrowClient(final String host) throws Exception {
         GenericObjectPool<MinaSftpClient> pool = pools.computeIfAbsent(host, k -> {
            MinaSftpClientFactory factory = new MinaSftpClientFactory(host);
-           GenericObjectPool objectPool = new GenericObjectPool<>(factory);
+           GenericObjectPool<MinaSftpClient> objectPool = new GenericObjectPool<>(factory);
            objectPool.setMaxTotal(10);
            objectPool.setMinIdle(2);
-           objectPool.setMaxIdle(5);
+           //objectPool.setMaxIdle(5);
            objectPool.setEvictorShutdownTimeout(Duration.ofMillis(1000L));
            return objectPool;
         });
