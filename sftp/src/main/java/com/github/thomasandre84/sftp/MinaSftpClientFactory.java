@@ -1,35 +1,39 @@
 package com.github.thomasandre84.sftp;
 
-import org.apache.commons.pool2.BasePooledObjectFactory;
+import org.apache.commons.pool2.KeyedPooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 
-public class MinaSftpClientFactory extends BasePooledObjectFactory<MinaSftpClient> {
-    private final String targetHost;
+public class MinaSftpClientFactory implements KeyedPooledObjectFactory<String, MinaSftpClient> {
 
-    public MinaSftpClientFactory(String targetHost) {
-        this.targetHost = targetHost;
+    public MinaSftpClientFactory() {
     }
 
     @Override
-    public MinaSftpClient create() throws Exception {
-        MinaSftpClient client = new MinaSftpClient(targetHost);
+    public void activateObject(String s, PooledObject<MinaSftpClient> pooledObject) {
+
+    }
+
+    @Override
+    public void destroyObject(String s, PooledObject<MinaSftpClient> pooledObject) throws Exception {
+        pooledObject.getObject().close();
+    }
+
+    @Override
+    public PooledObject<MinaSftpClient> makeObject(String s) throws Exception {
+        MinaSftpClient client = new MinaSftpClient(s);
         client.connect();
-        return client;
+        return new DefaultPooledObject<>(client);
     }
 
     @Override
-    public PooledObject<MinaSftpClient> wrap(MinaSftpClient minaSftpClient) {
-        return new DefaultPooledObject<>(minaSftpClient);
+    public void passivateObject(String s, PooledObject<MinaSftpClient> pooledObject) {
+
     }
 
     @Override
-    public void destroyObject(PooledObject<MinaSftpClient> p) throws Exception {
-        p.getObject().close();
+    public boolean validateObject(String s, PooledObject<MinaSftpClient> pooledObject) {
+        return pooledObject.getObject().getSshClient().isStarted();
     }
 
-    @Override
-    public boolean validateObject(PooledObject<MinaSftpClient> p) {
-        return p.getObject().getSshClient().isStarted();
-    }
 }

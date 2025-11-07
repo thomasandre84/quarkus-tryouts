@@ -1,39 +1,31 @@
 package com.github.thomasandre84.sftp;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
-import org.apache.commons.pool2.impl.GenericObjectPool;
-
-import java.time.Duration;
-import java.util.concurrent.ConcurrentHashMap;
+import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
 
 @ApplicationScoped
 public class SftpClientPoolManager {
-    private final ConcurrentHashMap<String, GenericObjectPool<MinaSftpClient>> pools = new ConcurrentHashMap<>();
+    private GenericKeyedObjectPool<String, MinaSftpClient> keyedObjectPool;
+
+    @PostConstruct
+    void init() {
+        MinaSftpClientFactory factory = new MinaSftpClientFactory();
+        keyedObjectPool = new GenericKeyedObjectPool<>(factory);
+    }
 
     public MinaSftpClient borrowClient(final String host) throws Exception {
-        GenericObjectPool<MinaSftpClient> pool = pools.computeIfAbsent(host, k -> {
-           MinaSftpClientFactory factory = new MinaSftpClientFactory(host);
-           GenericObjectPool<MinaSftpClient> objectPool = new GenericObjectPool<>(factory);
-           objectPool.setMaxTotal(10);
-           objectPool.setMinIdle(2);
-           //objectPool.setMaxIdle(5);
-           objectPool.setEvictorShutdownTimeout(Duration.ofMillis(1000L));
-           return objectPool;
-        });
-        return pool.borrowObject();
+        return keyedObjectPool.borrowObject(host);
     }
 
     public void returnClient(final String host, final MinaSftpClient client) {
-        GenericObjectPool<MinaSftpClient> pool = pools.get(host);
-        if (pool != null) {
-            pool.returnObject(client);
-        }
+        keyedObjectPool.returnObject(host, client);
     }
 
     @PreDestroy
     public void closeAll() {
-        pools.values().forEach(GenericObjectPool::close);
+        keyedObjectPool.close();
     }
 
 

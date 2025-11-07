@@ -18,7 +18,7 @@ public class MinaSftpClient {
     private static final Logger logger = LoggerFactory.getLogger(MinaSftpClient.class);
 
     private static final Path keyPath = Paths.get(System.getProperty("user.home"), ".ssh",  "id_rsa");
-    private static final String username = "thommi";
+    private static final String username = "tkadt";
     private static final Duration TIMEOUT = Duration.ofSeconds(10L);
 
     private final String targetHost;
