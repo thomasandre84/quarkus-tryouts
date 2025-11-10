@@ -3,15 +3,21 @@ package com.github.thomasandre84.sftp;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
 
 @ApplicationScoped
 public class SftpClientPoolManager {
     private GenericKeyedObjectPool<String, MinaSftpClient> keyedObjectPool;
+    private final MinaSftpClientFactory factory;
+
+    @Inject
+    public SftpClientPoolManager(MinaSftpClientFactory factory) {
+        this.factory = factory;
+    }
 
     @PostConstruct
     void init() {
-        MinaSftpClientFactory factory = new MinaSftpClientFactory();
         keyedObjectPool = new GenericKeyedObjectPool<>(factory);
     }
 

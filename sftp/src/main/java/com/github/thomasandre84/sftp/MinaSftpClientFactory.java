@@ -1,11 +1,15 @@
 package com.github.thomasandre84.sftp;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.apache.commons.pool2.KeyedPooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 
+@ApplicationScoped
 public class MinaSftpClientFactory implements KeyedPooledObjectFactory<String, MinaSftpClient> {
 
+    @Inject
     public MinaSftpClientFactory() {
     }
 
