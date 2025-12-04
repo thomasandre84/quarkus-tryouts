@@ -1,31 +1,31 @@
-package com.github.thomasandre84.sftp;
+package com.github.thomasandre84.sftp.db;
 
+import com.github.thomasandre84.sftp.SftpPoolService;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 
 import java.util.List;
 
 @Path("/sftp")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class SftpResource {
 
     @Inject
-    SftpLockRepository repository;
-    @Inject SftpPoolService poolService;
+    SftpLockHandler handler;
+    @Inject
+    SftpPoolService poolService;
 
     @GET
     public List<SftpLock> findAll() {
-        return repository.listAll();
+        return handler.getAllLocks();
     }
 
     @POST
-    @Transactional
-    public void create() {
-        SftpLock lock = new SftpLock();
-        repository.persist(lock);
+    @Path("/{target}")
+    public SftpLock create(@PathParam("target") String target) {
+        return handler.addNew(target);
     }
 
     @POST

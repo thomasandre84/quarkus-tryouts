@@ -9,6 +9,7 @@ import org.apache.commons.pool2.impl.GenericKeyedObjectPoolConfig;
 
 @ApplicationScoped
 public class SftpClientPoolManager {
+
     private GenericKeyedObjectPool<String, MinaSftpClient> keyedObjectPool;
 
     private final MinaSftpClientFactory factory;

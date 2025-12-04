@@ -27,4 +27,8 @@
     <changeSet id="interval_relation" author="t">
         <sqlFile path="db/version_1_0/interval_relation.sql" />
     </changeSet>
+
+    <changeSet id="sftp_lock" author="t">
+        <sqlFile path="db/version_1_0/sftp_lock.sql" />
+    </changeSet>
 </databaseChangeLog>
