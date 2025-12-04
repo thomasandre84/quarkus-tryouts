@@ -8,8 +8,8 @@ import jakarta.persistence.*;
 })
 public class IntervalRelation {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     @OneToOne
     @JoinColumn(name = "initial_interval_id", nullable = false)
@@ -27,11 +27,11 @@ public class IntervalRelation {
     protected IntervalRelation() {
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

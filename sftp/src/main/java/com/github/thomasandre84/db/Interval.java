@@ -3,11 +3,11 @@ package com.github.thomasandre84.db;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "interval")
+@Table(name = "run_interval")
 public class Interval {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String description;

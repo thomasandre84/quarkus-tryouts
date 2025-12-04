@@ -1,5 +1,5 @@
 CREATE TABLE initial_interval (
-    id INT NOT NULL,
-    description VARCHAR(255)
+    id INT NOT NULL AUTO_INCREMENT,
+    description VARCHAR(255),
+    PRIMARY KEY(id)
 );
-ALTER TABLE initial_interval ADD CONSTRAINT initial_interval_pkey PRIMARY KEY (id);

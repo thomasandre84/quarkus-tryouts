@@ -7,14 +7,14 @@
     http://www.liquibase.org/xml/ns/dbchangelog
     https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet author="quarkus" id="1">
+    <!--<changeSet author="quarkus" id="1">
         <createTable tableName="quarkus">
             <column name="ID" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="NAME" type="VARCHAR(255)"/>
         </createTable>
-    </changeSet>
+    </changeSet>-->
 
     <changeSet id="initial_interval" author="t">
         <sqlFile path="db/version_1_0/initialInterval.sql" />
