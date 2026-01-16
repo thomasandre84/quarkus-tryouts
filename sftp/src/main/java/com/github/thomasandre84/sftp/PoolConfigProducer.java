@@ -1,0 +1,45 @@
+package com.github.thomasandre84.sftp;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Named;
+import org.apache.commons.pool2.impl.GenericKeyedObjectPoolConfig;
+
+import java.time.Duration;
+
+@ApplicationScoped
+public class PoolConfigProducer {
+
+    @Produces
+    @ApplicationScoped
+    @Named("sftpClientPoolConfig")
+    public GenericKeyedObjectPoolConfig<MinaSftpClient> createSftpClientPoolConfig() {
+        GenericKeyedObjectPoolConfig<MinaSftpClient> poolConfig = new GenericKeyedObjectPoolConfig<>();
+        poolConfig.setMaxTotalPerKey(5);
+        poolConfig.setMinIdlePerKey(1);
+        poolConfig.setMaxIdlePerKey(3);
+        poolConfig.setTestOnBorrow(true);
+        poolConfig.setTestOnReturn(true);
+        poolConfig.setTestWhileIdle(true);
+        poolConfig.setMinEvictableIdleTime(Duration.ofMinutes(1));
+        poolConfig.setMinEvictableIdleTime(Duration.ofMinutes(2));
+        return poolConfig;
+    }
+
+    @Produces
+    @ApplicationScoped
+    @Named("sshSessionPoolConfig")
+    public GenericKeyedObjectPoolConfig<MinaSshSession> createSshSessionPoolConfig() {
+        GenericKeyedObjectPoolConfig<MinaSshSession> poolConfig = new GenericKeyedObjectPoolConfig<>();
+        poolConfig.setMaxTotalPerKey(5);
+        poolConfig.setMinIdlePerKey(1);
+        poolConfig.setMaxIdlePerKey(3);
+        poolConfig.setTestOnBorrow(true);
+        poolConfig.setTestOnReturn(true);
+        poolConfig.setTestWhileIdle(true);
+        poolConfig.setMinEvictableIdleTime(Duration.ofMinutes(1));
+        poolConfig.setMinEvictableIdleTime(Duration.ofMinutes(2));
+        return poolConfig;
+    }
+
+}
