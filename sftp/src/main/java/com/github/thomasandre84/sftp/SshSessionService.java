@@ -7,7 +7,10 @@ import org.apache.sshd.sftp.client.SftpClientFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
@@ -16,12 +19,11 @@ public class SshSessionService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SshSessionService.class);
 
     private final SshSessionPoolManager sshSessionPoolManager;
-    private final ExecutorService executorService;
+    private static final ExecutorService executorService = newFixedThreadPool(10);
 
     @Inject
     public SshSessionService(SshSessionPoolManager sshSessionPoolManager) {
         this.sshSessionPoolManager = sshSessionPoolManager;
-        this.executorService = newFixedThreadPool(10);
     }
 
     public void listSftpHomeDir(String host) {
@@ -43,10 +45,16 @@ public class SshSessionService {
         }
     }
 
-    public void listSftpHomeDirAsync(String host, int amount) throws InterruptedException {
+    public void listSftpHomeDirAsync(String host, int amount) throws InterruptedException, ExecutionException {
+        var futures = new ArrayList<Future<?>>();
         for (int i = 0; i < amount; i++) {
-            executorService.submit(() -> listSftpHomeDir(host));
+            Future<?> future = executorService.submit(() -> listSftpHomeDir(host));
+            futures.add(future);
         }
-        Thread.sleep(5000L);
+
+        for (Future<?> future : futures) {
+            future.get();
+        }
+
     }
 }

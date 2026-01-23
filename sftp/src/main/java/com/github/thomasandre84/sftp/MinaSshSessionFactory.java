@@ -4,6 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import org.apache.commons.pool2.KeyedPooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
+import org.apache.sshd.client.session.ClientSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +43,8 @@ public class MinaSshSessionFactory implements KeyedPooledObjectFactory<String, M
     @Override
     public boolean validateObject(String s, PooledObject<MinaSshSession> pooledObject) {
         log.info("Validating MinaSshSession for {} and client {}", s, pooledObject.getObject().getSshClient());
-        return pooledObject.getObject().getSession().isOpen();
+        ClientSession session = pooledObject.getObject().getSession();
+        return session.isOpen() && session.getSessionState().contains(ClientSession.ClientSessionEvent.AUTHED);
     }
 
 }
