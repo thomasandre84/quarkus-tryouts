@@ -18,8 +18,13 @@ public class SftpLockHandler {
 
     @Transactional
     public SftpLock addNew(String target) {
-        SftpLock lock = new SftpLock(Instant.now(), Instant.now().plusSeconds(60), target, "this");
+        SftpLock lock = new SftpLock(Instant.now(), Instant.now().plusSeconds(60), target, "this-host");
         sftpLockRepository.persist(lock);
         return lock;
+    }
+
+    @Transactional
+    public void deleteLock(SftpLock sftpLock) {
+        sftpLockRepository.delete(sftpLock);
     }
 }
