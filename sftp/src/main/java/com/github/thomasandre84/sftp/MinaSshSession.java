@@ -5,8 +5,6 @@ import org.apache.sshd.client.session.ClientSession;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.apache.sshd.common.keyprovider.KeyIdentityProvider;
 import org.apache.sshd.common.session.SessionHeartbeatController;
-import org.apache.sshd.sftp.client.SftpClient;
-import org.apache.sshd.sftp.client.SftpClientFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +18,7 @@ public class MinaSshSession {
     private static final Logger logger = LoggerFactory.getLogger(MinaSshSession.class);
 
     private static final Path keyPath = Paths.get(System.getProperty("user.home"), ".ssh",  "id_rsa");
-    private static final String username = "tkadt";
+    private static final String username = "thommi";
     private static final Duration TIMEOUT = Duration.ofSeconds(10L);
 
     private final String targetHost;

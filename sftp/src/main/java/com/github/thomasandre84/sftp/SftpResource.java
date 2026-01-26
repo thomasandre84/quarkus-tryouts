@@ -47,8 +47,8 @@ public class SftpResource {
 
     @POST
     @Path("/sessions/{host}")
-    public void listSftpHomeDir(@PathParam("host") String host) {
-        sshSessionService.listSftpHomeDir(host);
+    public List<String> listSftpHomeDir(@PathParam("host") String host) {
+        return sshSessionService.listSftpHomeDir(host);
     }
 
     @POST

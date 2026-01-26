@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -26,13 +27,16 @@ public class SshSessionService {
         this.sshSessionPoolManager = sshSessionPoolManager;
     }
 
-    public void listSftpHomeDir(String host) {
+    public List<String> listSftpHomeDir(String host) {
         MinaSshSession session = null;
+        List<String> files = new ArrayList<>();
         try {
             session = sshSessionPoolManager.borrowClient(host);
             try (SftpClient sftpClient = SftpClientFactory.instance().createSftpClient(session.getSession())) {
                 var dir =  sftpClient.readDir(".");
-                LOGGER.info("Found SFTP home dir {}", dir);
+
+                dir.iterator().forEachRemaining(f -> files.add(f.getFilename()));
+                LOGGER.info("Found SFTP home dir  with files: {}", files);
             } finally {
                 LOGGER.info("Returning SFTP Client for host: {}", host);
             }
@@ -43,10 +47,12 @@ public class SshSessionService {
                 sshSessionPoolManager.returnClient(host, session);
             }
         }
+        return files;
     }
 
     public void listSftpHomeDirAsync(String host, int amount) throws InterruptedException, ExecutionException {
         var futures = new ArrayList<Future<?>>();
+        //List<String> files = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
             Future<?> future = executorService.submit(() -> listSftpHomeDir(host));
             futures.add(future);
