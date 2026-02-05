@@ -54,6 +54,7 @@ public class SshSessionService {
         var futures = new ArrayList<Future<?>>();
         //List<String> files = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
+            LOGGER.info("Listening folder the {} time", i);
             Future<?> future = executorService.submit(() -> listSftpHomeDir(host));
             futures.add(future);
         }

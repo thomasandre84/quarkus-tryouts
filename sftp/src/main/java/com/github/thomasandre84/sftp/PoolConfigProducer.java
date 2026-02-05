@@ -22,7 +22,6 @@ public class PoolConfigProducer {
         poolConfig.setTestOnReturn(true);
         poolConfig.setTestWhileIdle(true);
         poolConfig.setMinEvictableIdleTime(Duration.ofMinutes(1));
-        poolConfig.setMinEvictableIdleTime(Duration.ofMinutes(2));
         return poolConfig;
     }
 
@@ -31,14 +30,13 @@ public class PoolConfigProducer {
     @Named("sshSessionPoolConfig")
     public GenericKeyedObjectPoolConfig<MinaSshSession> createSshSessionPoolConfig() {
         GenericKeyedObjectPoolConfig<MinaSshSession> poolConfig = new GenericKeyedObjectPoolConfig<>();
-        poolConfig.setMaxTotalPerKey(5);
+        poolConfig.setMaxTotalPerKey(3);
         poolConfig.setMinIdlePerKey(1);
         poolConfig.setMaxIdlePerKey(3);
         poolConfig.setTestOnBorrow(true);
         poolConfig.setTestOnReturn(true);
         poolConfig.setTestWhileIdle(true);
         poolConfig.setMinEvictableIdleTime(Duration.ofMinutes(1));
-        poolConfig.setMinEvictableIdleTime(Duration.ofMinutes(2));
         return poolConfig;
     }
 
