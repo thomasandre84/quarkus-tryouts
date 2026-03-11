@@ -52,6 +52,10 @@ public class MinaSshSession {
         return sshClient;
     }
 
+    public String getKey() {
+        return targetHost;
+    }
+
     public void close() throws IOException {
         session.close();
         sshClient.close();

@@ -31,12 +31,13 @@ public class PoolConfigProducer {
     public GenericKeyedObjectPoolConfig<MinaSshSession> createSshSessionPoolConfig() {
         GenericKeyedObjectPoolConfig<MinaSshSession> poolConfig = new GenericKeyedObjectPoolConfig<>();
         poolConfig.setMaxTotalPerKey(3);
-        poolConfig.setMinIdlePerKey(1);
+        poolConfig.setMinIdlePerKey(0);
         poolConfig.setMaxIdlePerKey(3);
         poolConfig.setTestOnBorrow(true);
         poolConfig.setTestOnReturn(true);
         poolConfig.setTestWhileIdle(true);
-        poolConfig.setMinEvictableIdleTime(Duration.ofMinutes(1));
+        poolConfig.setMinEvictableIdleTime(Duration.ofSeconds(20)); // Evict idle sessions after 20 seconds
+        poolConfig.setTimeBetweenEvictionRuns(Duration.ofSeconds(10)); // Run eviction every 10 seconds
         return poolConfig;
     }
 
