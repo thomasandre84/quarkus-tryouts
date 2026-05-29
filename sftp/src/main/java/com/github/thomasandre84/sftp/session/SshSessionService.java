@@ -1,4 +1,4 @@
-package com.github.thomasandre84.sftp;
+package com.github.thomasandre84.sftp.session;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -28,10 +28,10 @@ public class SshSessionService {
     }
 
     public List<String> listSftpHomeDir(String host) {
-        MinaSshSession session = null;
+        //MinaSshSession session = null;
         List<String> files = new ArrayList<>();
-        try {
-            session = sshSessionPoolManager.borrowClient(host);
+        try (MinaSshSession session = sshSessionPoolManager.borrowClient(host)){
+            //session = sshSessionPoolManager.borrowClient(host);
             try (SftpClient sftpClient = SftpClientFactory.instance().createSftpClient(session.getSession())) {
                 var dir =  sftpClient.readDir(".");
 
@@ -42,20 +42,17 @@ public class SshSessionService {
             }
         } catch (Exception e) {
             LOGGER.error("Error while listing SFTP home directory for host: {}", host, e);
-        } finally {
-            if (session != null) {
-                sshSessionPoolManager.returnClient(host, session);
-            }
         }
+
         return files;
     }
 
     public void listSftpHomeDirAsync(String host, int amount) throws InterruptedException, ExecutionException {
-        var futures = new ArrayList<Future<?>>();
+        var futures = new ArrayList<Future<List<String>>>();
         //List<String> files = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
             LOGGER.info("Listening folder the {} time", i);
-            Future<?> future = executorService.submit(() -> listSftpHomeDir(host));
+            Future<List<String>> future = executorService.submit(() -> listSftpHomeDir(host));
             futures.add(future);
         }
 

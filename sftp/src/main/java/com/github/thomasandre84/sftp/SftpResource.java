@@ -1,7 +1,10 @@
 package com.github.thomasandre84.sftp;
 
+import com.github.thomasandre84.sftp.channel.SftpChannelService;
+import com.github.thomasandre84.sftp.client.SftpPoolService;
 import com.github.thomasandre84.sftp.db.SftpLock;
 import com.github.thomasandre84.sftp.db.SftpLockHandler;
+import com.github.thomasandre84.sftp.session.SshSessionService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -20,6 +23,9 @@ public class SftpResource {
 
     @Inject
     SshSessionService sshSessionService;
+
+    @Inject
+    SftpChannelService channelService;
 
 
     @GET
@@ -56,4 +62,17 @@ public class SftpResource {
     public void listSftpHomeDirAsync(@PathParam("host") String host, @PathParam("amount") int amount) throws Exception {
         sshSessionService.listSftpHomeDirAsync(host, amount);
     }
+
+    @POST
+    @Path("/sessions/channel/{host}")
+    public List<String> listSftpHomeDirChannel(@PathParam("host") String host) {
+        return channelService.listDirAsync(host);
+    }
+
+    @POST
+    @Path("/sessions/channel/async/{host}/{amount}")
+    public void listSftpHomeDirAsyncChannel(@PathParam("host") String host, @PathParam("amount") int amount) throws Exception {
+        channelService.listDirAsync(host, amount);
+    }
+
 }

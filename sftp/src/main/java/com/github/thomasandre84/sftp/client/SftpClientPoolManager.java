@@ -1,4 +1,4 @@
-package com.github.thomasandre84.sftp;
+package com.github.thomasandre84.sftp.client;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;

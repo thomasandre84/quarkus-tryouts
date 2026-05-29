@@ -1,4 +1,4 @@
-package com.github.thomasandre84.sftp;
+package com.github.thomasandre84.sftp.channel;
 
 import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.session.ClientSession;

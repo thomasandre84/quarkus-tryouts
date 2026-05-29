@@ -1,4 +1,4 @@
-package com.github.thomasandre84.sftp;
+package com.github.thomasandre84.sftp.client;
 
 import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;

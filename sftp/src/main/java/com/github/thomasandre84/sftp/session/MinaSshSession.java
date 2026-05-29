@@ -1,4 +1,4 @@
-package com.github.thomasandre84.sftp;
+package com.github.thomasandre84.sftp.session;
 
 import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.session.ClientSession;
@@ -8,13 +8,14 @@ import org.apache.sshd.common.session.SessionHeartbeatController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
-public class MinaSshSession {
+public class MinaSshSession implements Closeable {
     private static final Logger logger = LoggerFactory.getLogger(MinaSshSession.class);
 
     private static final Path keyPath = Paths.get(System.getProperty("user.home"), ".ssh",  "id_rsa");
@@ -56,6 +57,7 @@ public class MinaSshSession {
         return targetHost;
     }
 
+    @Override
     public void close() throws IOException {
         session.close();
         sshClient.close();

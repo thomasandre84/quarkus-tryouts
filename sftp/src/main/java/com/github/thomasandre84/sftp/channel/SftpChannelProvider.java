@@ -1,5 +1,7 @@
-package com.github.thomasandre84.sftp;
+package com.github.thomasandre84.sftp.channel;
 
+import com.github.thomasandre84.sftp.session.MinaSshSession;
+import com.github.thomasandre84.sftp.session.SshSessionPoolManager;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.apache.sshd.sftp.client.SftpClient;

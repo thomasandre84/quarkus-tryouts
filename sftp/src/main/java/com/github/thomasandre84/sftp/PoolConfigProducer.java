@@ -1,5 +1,7 @@
 package com.github.thomasandre84.sftp;
 
+import com.github.thomasandre84.sftp.client.MinaSftpClient;
+import com.github.thomasandre84.sftp.session.MinaSshSession;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Named;
@@ -30,7 +32,7 @@ public class PoolConfigProducer {
     @Named("sshSessionPoolConfig")
     public GenericKeyedObjectPoolConfig<MinaSshSession> createSshSessionPoolConfig() {
         GenericKeyedObjectPoolConfig<MinaSshSession> poolConfig = new GenericKeyedObjectPoolConfig<>();
-        poolConfig.setMaxTotalPerKey(3);
+        poolConfig.setMaxTotalPerKey(8);
         poolConfig.setMinIdlePerKey(0);
         poolConfig.setMaxIdlePerKey(3);
         poolConfig.setTestOnBorrow(true);
