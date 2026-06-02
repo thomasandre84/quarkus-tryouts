@@ -32,9 +32,9 @@ public class PoolConfigProducer {
     @Named("sshSessionPoolConfig")
     public GenericKeyedObjectPoolConfig<MinaSshSession> createSshSessionPoolConfig() {
         GenericKeyedObjectPoolConfig<MinaSshSession> poolConfig = new GenericKeyedObjectPoolConfig<>();
-        poolConfig.setMaxTotalPerKey(8);
+        poolConfig.setMaxTotalPerKey(1);
         poolConfig.setMinIdlePerKey(0);
-        poolConfig.setMaxIdlePerKey(3);
+        poolConfig.setMaxIdlePerKey(1);
         poolConfig.setTestOnBorrow(true);
         poolConfig.setTestOnReturn(true);
         poolConfig.setTestWhileIdle(true);

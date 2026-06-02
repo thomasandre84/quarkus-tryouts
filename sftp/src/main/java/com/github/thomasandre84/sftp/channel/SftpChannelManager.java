@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * decremented when the wrapper is closed.
  */
 @ApplicationScoped
-public class SftpChannelProvider {
+public class SftpChannelManager {
     private static final int MAX_CHANNELS_PER_SESSION = 2;
     private final SshSessionPoolManager sshSessionPoolManager;
 
@@ -26,7 +26,7 @@ public class SftpChannelProvider {
     private final ConcurrentHashMap<MinaSshSession, AtomicInteger> channelCount = new ConcurrentHashMap<>();
 
     @Inject
-    public SftpChannelProvider(SshSessionPoolManager sshSessionPoolManager) {
+    public SftpChannelManager(SshSessionPoolManager sshSessionPoolManager) {
         this.sshSessionPoolManager = sshSessionPoolManager;
     }
 
@@ -35,27 +35,27 @@ public class SftpChannelProvider {
      * The returned SessionChannel MUST be closed by the caller to decrement the counter and
      * potentially return the session to the pool.
      */
-    public SessionChannel getSftpClient(String host) throws Exception {
+    public ManagedSftpClient getSftpClient(String host) throws Exception {
         MinaSshSession minaSession = getSession(host);
         // create SFTP client on the underlying ClientSession
         SftpClient sftpClient = SftpClientFactory.instance().createSftpClient(minaSession.getSession());
         // increment channel count
         channelCount.computeIfAbsent(minaSession, k -> new AtomicInteger(0)).incrementAndGet();
-        return new SessionChannel(minaSession, sftpClient);
+        return new ManagedSftpClient(this, minaSession, sftpClient);
     }
 
     /**
      * Return a client. This will be called from SessionChannel.close() and will handle
      * decrementing the counter and returning the session to the pool if no channels remain.
      */
-    private void returnSftpClient(SessionChannel sessionChannel) {
+    public void returnSftpClient(ManagedSftpClient sessionChannel) {
         Objects.requireNonNull(sessionChannel, "sessionChannel");
-        MinaSshSession session = sessionChannel.sshSession();
+        MinaSshSession session = sessionChannel.getSshSession();
         String host = session.getKey();
 
-        // close the sftp client (already closed by SessionChannel.close usually, but be defensive)
+        // close the sftp client (already closed by ManagedSftpClient.close usually, but be defensive)
         try {
-            sessionChannel.sftpClient().close();
+            sessionChannel.getSftpClient().close();
         } catch (IOException e) {
             // ignore or log if you have a logger
         }
@@ -81,6 +81,8 @@ public class SftpChannelProvider {
             }
         }
     }
+
+    // ManagedSftpClient is implemented as a top-level class in the same package.
 
     /**
      * Find an existing session with available channel capacity or borrow a new one.
